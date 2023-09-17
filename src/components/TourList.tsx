@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { getToursUseCase } from "../useCases/getToursUseCase";
+import { getToursUseCase } from "../../useCases/getToursUseCase";
 
 export const TourList = ({ style }) =>{
   const [data, setData] = useState([]);
