@@ -1,8 +1,10 @@
 import React, { useState, useEffect, Component } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { getToursUseCase } from "../../useCases/getToursUseCase";
 
-export const TourList = ({ style }) =>{
+export const TourList = ({ style }) => {
+  
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +25,7 @@ export const TourList = ({ style }) =>{
   }, []);
 
   return (
-    <View style={[ style] }>
+    <View style={[style]}>
       {loading ? (
         <Text>Cargando</Text>
       ) : error ? (
@@ -40,52 +42,34 @@ export const TourList = ({ style }) =>{
 };
 
 const TourDetails = (props) => {
-  const {
-    start_date,
-    duration,
-    location,
-    guide,
-    description,
-    limit,
-    state
-  } = props.data;
+  const navigation = useNavigation();
+  const { start_date, duration, location, guide, description, limit, state } =
+    props.data;
 
   return (
+    <TouchableHighlight onPress={() => navigation.navigate("TourDetail")}>
     <View style={styles.container}>
-      <Text style={styles.title}>Destalles del evento</Text>
-      <Text>
-        <Text style={styles.label}>Fecha de inicio:</Text> {start_date}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Duración:</Text> {duration}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Ubicación:</Text> {location}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Guía:</Text> {guide}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Descripción:</Text> {description}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Cupo:</Text> {limit}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Estado:</Text> {state}
-      </Text>
+      <View style={{ flexDirection: "row" }}>
+        <View style={styles.thumbail} />
+        <View style={{ flexDirection: "column" }}>
+          <Text>
+            <Text style={styles.title}>Titulo:</Text> {description}
+          </Text>
+          <Text>{location}</Text>
+        </View>
+      </View>
+      <View style={styles.divider} />
     </View>
+    </TouchableHighlight>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
+    flexDirection: "column",
     margin: 16,
-    overflow: 'scroll', 
+    overflow: "scroll",
+    alignSelf: "stretch",
   },
   title: {
     fontSize: 18,
@@ -94,5 +78,19 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
+  },
+  thumbail: {
+    backgroundColor: "#F6F6F6",
+    width: 65,
+    height: 65,
+    marginRight: 16,
+    borderRadius: 10,
+  },
+  divider: {
+    marginTop: 10,
+    height: 1,
+    backgroundColor: "#ccc",
+    marginRigth: 14,
+    marginLeft: 80,
   },
 });
