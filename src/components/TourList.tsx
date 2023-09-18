@@ -43,18 +43,16 @@ export const TourList = ({ style }) => {
 
 const TourDetails = (props) => {
   const navigation = useNavigation();
-  const { start_date, duration, location, guide, description, limit, state } =
+  const { start_date, title, location, guide, description, limit, state } =
     props.data;
 
   return (
     <TouchableHighlight onPress={() => navigation.navigate("TourDetail")}>
     <View style={styles.container}>
-      <View style={{ flexDirection: "row" }}>
+      <View style={styles.row}>
         <View style={styles.thumbail} />
-        <View style={{ flexDirection: "column" }}>
-          <Text>
-            <Text style={styles.title}>Titulo:</Text> {description}
-          </Text>
+        <View style={styles.columns}>
+          <Text style={styles.title} numberOfLines={2} >{location}</Text> 
           <Text>{location}</Text>
         </View>
       </View>
@@ -68,21 +66,23 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     margin: 16,
-    overflow: "scroll",
-    alignSelf: "stretch",
+  },
+  row: {
+    flexDirection: "row",
+  },
+  columns: {
+    flexDirection: "column",
+    width: "80%",
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "semibold",
     marginBottom: 8,
-  },
-  label: {
-    fontWeight: "bold",
   },
   thumbail: {
     backgroundColor: "#F6F6F6",
-    width: 65,
-    height: 65,
+    width: "20%",
+    aspectRatio: 1,
     marginRight: 16,
     borderRadius: 10,
   },
