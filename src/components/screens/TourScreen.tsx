@@ -6,7 +6,7 @@ import SearchBox from "../SearchBox";
 export default function TourScreen() {
   return (
     <View style={styles.container}>
-      <SearchBox onSearch={(searchText) => {}}/>
+      <Text>Aca va a estar el detalle</Text>
     </View>
   );
 }
