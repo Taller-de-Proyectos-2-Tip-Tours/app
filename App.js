@@ -12,9 +12,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="TourList" title="Paseos" component={TourListScreen} />
-        <Stack.Screen name="TourDetail" title="Detalle del paseo" component={TourScreen} />
+        <Stack.Screen name="Home" options={{ title:"Tip Tours" }} component={HomeScreen} />
+        <Stack.Screen name="TourList" options={{ title: "Paseos" }} component={TourListScreen} />
+        <Stack.Screen name="TourDetail" options={{ title: "Detalle del paseo"}} component={TourScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

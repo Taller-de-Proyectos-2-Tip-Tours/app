@@ -33,7 +33,7 @@ export const TourList = ({ style }) => {
       ) : (
         <ScrollView>
           {data.map((item) => (
-            <TourDetails data={item} key={item.id} />
+            <TourDetailsRow data={item} key={item.id} />
           ))}
         </ScrollView>
       )}
@@ -41,9 +41,9 @@ export const TourList = ({ style }) => {
   );
 };
 
-const TourDetails = (props) => {
+const TourDetailsRow = (props) => {
   const navigation = useNavigation();
-  const { start_date, title, location, guide, description, limit, state } =
+  const { name, city } =
     props.data;
 
   return (
@@ -52,8 +52,8 @@ const TourDetails = (props) => {
       <View style={styles.row}>
         <View style={styles.thumbail} />
         <View style={styles.columns}>
-          <Text style={styles.title} numberOfLines={2} >{location}</Text> 
-          <Text>{location}</Text>
+          <Text style={styles.title} numberOfLines={2} >{name}</Text> 
+          <Text>{city}</Text>
         </View>
       </View>
       <View style={styles.divider} />
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "semibold",
+    fontWeight: "bold",
     marginBottom: 8,
   },
   thumbail: {
