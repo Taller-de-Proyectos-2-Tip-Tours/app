@@ -1,6 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from "react-native";
 import StarRating from "react-native-star-rating-widget";
+import { PhotoCarousel } from "./PhotoCarousel";
+
+const { width } = Dimensions.get('window');
 
 export const TourDetail = (props) => {
   const {
@@ -26,7 +29,7 @@ export const TourDetail = (props) => {
   return (
     <View style={styles.columns}>
       <ScrollView style={styles.scrollView}>
-        <View key={1} style={styles.image}></View>
+        <PhotoCarousel key={1} style={styles.image} photos={[mainPhoto, ...extraPhotos]} />
         <Text key={2} style={styles.title}>
           {name}
         </Text>
@@ -81,7 +84,9 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 200,
-    backgroundColor: "#ccc",
+    borderRadius: 15,
+    width: width - 32,
+    resizeMode: 'stretch'
   },
   columns: {
     flexDirection: "column",
