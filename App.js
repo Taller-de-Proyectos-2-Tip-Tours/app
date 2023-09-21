@@ -4,7 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from "./src/components/screens/HomeScreen";
 import TourListScreen from "./src/components/screens/TourListScreen";
 import TourScreen from "./src/components/screens/TourScreen";
+import Mapbox from '@rnmapbox/maps';
 
+Mapbox.setAccessToken('pk.eyJ1IjoiZ2Vyb2lsbGVzY2FzIiwiYSI6ImNsbXBsempqbzBqb3AyanJxeTV6NWo2YmMifQ.-53qg188DsXgfzFHQm1w-g');
 
 const Stack = createStackNavigator();
 

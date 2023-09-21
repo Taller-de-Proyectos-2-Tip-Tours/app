@@ -24,10 +24,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.craftcoder.tiptour"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "maplibre",
+          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoiZ2Vyb2lsbGVzY2FzIiwiYSI6ImNsbXBsempqbzBqb3AyanJxeTV6NWo2YmMifQ.-53qg188DsXgfzFHQm1w-g"
+        }
+      ]
+    ]
   }
 }
