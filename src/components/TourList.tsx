@@ -19,7 +19,7 @@ export const TourList = ({ style }) => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err);
+        setError("Hubo un error cargando los datos :(");
         setLoading(false);
       });
   }, []);
