@@ -23,7 +23,7 @@ export const getToursUseCase = async (filters) => {
         "description": item.description,
         "maxCapacity": 20,
         "city": item.city,
-        "language": item.lenguage,
+        "language": item.language ? item.language : "Español",
         "guideName": "Juan Perez",
         "numRatings": 25,
         "averageRating": 4.5,
@@ -34,16 +34,12 @@ export const getToursUseCase = async (filters) => {
         "meetingPointDescription": item.meetingPoint,
         "comments": [
           {
-            "user": "Alice",
-            "comment": "The views were amazing!"
+            "user": "Juan Perez",
+            "comment": "Esta super bien, lo recomiendo."
           },
           {
-            "user": "Bob",
-            "comment": "Great guide, very knowledgeable."
-          },
-          {
-            "user": "Eve",
-            "comment": "I had a fantastic time on this hike."
+            "user": "Lucas Rodriguez",
+            "comment": "El tour esta bien pero el guia no me parecio muy interesado en el tema."
           }
         ]
       }        

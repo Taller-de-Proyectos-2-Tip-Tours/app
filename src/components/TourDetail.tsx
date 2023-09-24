@@ -6,6 +6,7 @@ import {
   Pressable,
   ScrollView,
   Dimensions,
+  Image,
   TouchableOpacity,
 } from "react-native";
 import StarRating from "react-native-star-rating-widget";
@@ -98,17 +99,20 @@ export const TourDetail = (props) => {
             starSize={35}
           />
         </View>
-        <Text key={10} style={styles.title}>
+        <View key={10} style={styles.map}> 
+          <Image source={require("../../assets/map_preview.jpg")} />
+        </View>
+        <Text key={11} style={styles.title}>
           Punto de encuentro
         </Text>
-        <Text key={11} style={styles.label}>
+        <Text key={12} style={styles.label}>
           {meetingPointDescription}
         </Text>
-        <Text key={12} style={styles.title}>
+        <Text key={13} style={styles.title}>
           Comentarios
         </Text>
         {comments.map((item, index) => (
-          <Text key={13 + index} style={styles.comment}>
+          <Text key={14 + index} style={styles.comment}>
             {item.user}: {item.comment}
           </Text>
         ))}
@@ -185,7 +189,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   map: {
-    height: 400,
+    height: 200,
+    width: "100%",
+    marginTop: 10,
     borderRadius: 15,
+    alignItems: "center",
   },
 });

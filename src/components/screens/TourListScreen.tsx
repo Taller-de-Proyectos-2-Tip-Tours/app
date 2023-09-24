@@ -12,9 +12,18 @@ export default function TourListScreen() {
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedCities, setSelectedCities] = useState(undefined);
+  const [nameFilter, setNameFilter] = useState(undefined);
 
   const applyFilters = (cities) => {
     setSelectedCities(cities);
+  };
+
+  const applyNameFilters = (name) => {
+    if(name == "") {
+      setNameFilter(undefined);
+    } else {
+      setNameFilter({name: name});
+    }
   };
 
   const dimissFilterModal = () => {
@@ -23,7 +32,8 @@ export default function TourListScreen() {
 
   useEffect(() => {
     setLoading(true);
-    getToursUseCase(selectedCities)
+    let filters = {...selectedCities, ...nameFilter}
+    getToursUseCase(filters)
       .then((data) => {
         setData(data);
         setLoading(false);
@@ -33,12 +43,12 @@ export default function TourListScreen() {
         setError("Hubo un error cargando los datos :(");
         setLoading(false);
       });
-  }, [selectedCities]);
+  }, [selectedCities, nameFilter]);
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <SearchBox onSearch={(searchText) => {}} />
+        <SearchBox onSearch={applyNameFilters} />
         <TouchableOpacity
           onPress={() => setIsFilterModalOpen(true)}
           style={{ padding: 10, flex: 1 }}
