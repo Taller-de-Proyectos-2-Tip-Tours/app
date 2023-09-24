@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text,Image, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
+import { View, Text,Image, StyleSheet, ScrollView, TouchableHighlight, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export const TourList = ({ style, tours}) => {
@@ -19,7 +19,7 @@ const TourDetailsRow = (props) => {
   const { name, city, mainPhoto } = props.data;
 
   return (
-    <TouchableHighlight onPress={() => navigation.navigate("TourDetail", { tour: props.data })}>
+    <TouchableOpacity onPress={() => navigation.navigate("TourDetail", { tour: props.data })}>
     <View style={styles.container}>
       <View style={styles.row}>
         <Image style={styles.thumbail} source={{uri: mainPhoto}}/>
@@ -30,7 +30,7 @@ const TourDetailsRow = (props) => {
       </View>
       <View style={styles.divider} />
     </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 
