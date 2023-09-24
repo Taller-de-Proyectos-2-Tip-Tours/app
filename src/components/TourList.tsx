@@ -1,56 +1,28 @@
-import React, { useState, useEffect, Component } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
+import React from "react";
+import { View, Text,Image, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getToursUseCase } from "../../useCases/getToursUseCase";
 
-export const TourList = ({ style }) => {
-  
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Define the API endpoint URL
-
-    // Make the API call
-    getToursUseCase()
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        setLoading(false);
-      });
-  }, []);
-
+export const TourList = ({ style, tours}) => {
   return (
     <View style={[style]}>
-      {loading ? (
-        <Text>Cargando</Text>
-      ) : error ? (
-        <Text>Error: {error}</Text>
-      ) : (
-        <ScrollView>
-          {data.map((item) => (
+       <ScrollView>
+          {tours.map((item) => (
             <TourDetailsRow data={item} key={item.id} />
           ))}
         </ScrollView>
-      )}
     </View>
   );
 };
 
 const TourDetailsRow = (props) => {
   const navigation = useNavigation();
-  const { name, city } =
-    props.data;
+  const { name, city, mainPhoto } = props.data;
 
   return (
-    <TouchableHighlight onPress={() => navigation.navigate("TourDetail")}>
+    <TouchableHighlight onPress={() => navigation.navigate("TourDetail", { tour: props.data })}>
     <View style={styles.container}>
       <View style={styles.row}>
-        <View style={styles.thumbail} />
+        <Image style={styles.thumbail} source={{uri: mainPhoto}}/>
         <View style={styles.columns}>
           <Text style={styles.title} numberOfLines={2} >{name}</Text> 
           <Text>{city}</Text>

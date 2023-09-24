@@ -1,9 +1,19 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import StarRating from "react-native-star-rating-widget";
 import { PhotoCarousel } from "./PhotoCarousel";
+import DateHourPicker from "./CheckboxDropdown";
+import CheckboxDropdown from "./CheckboxDropdown";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export const TourDetail = (props) => {
   const {
@@ -21,15 +31,28 @@ export const TourDetail = (props) => {
     extraPhotos,
     mapPrototype,
     meetingPointDescription,
-    numReviews,
-    averageReviewRating,
     comments,
   } = props.data;
+
+  const [selectedOption, setSelectedOptions] = useState();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleOptionSelect = (option) => {
+    setSelectedOptions(option);
+  };
 
   return (
     <View style={styles.columns}>
       <ScrollView style={styles.scrollView}>
-        <PhotoCarousel key={1} style={styles.image} photos={[mainPhoto, ...extraPhotos]} />
+        <PhotoCarousel
+          key={1}
+          style={styles.image}
+          photos={[mainPhoto, ...extraPhotos]}
+        />
         <Text key={2} style={styles.title}>
           {name}
         </Text>
@@ -44,9 +67,28 @@ export const TourDetail = (props) => {
           <Text style={styles.label}>{city}</Text>
           <Text style={styles.label}>El guia habla en: {language}</Text>
         </View>
+        <View key={8}>
+          <TouchableOpacity
+            onPress={toggleDropdown}
+            style={styles.toggleButton}
+          >
+            <Text>Ver fechas disponibles</Text>
+          </TouchableOpacity>
+          <CheckboxDropdown
+            options={availableDates.map(
+              (date) => `${date.date} - ${date.time}`
+            )}
+            selectedOptions={selectedOption}
+            onSelect={handleOptionSelect}
+            visible={dropdownVisible}
+            onClose={toggleDropdown}
+          />
+          <Text>Fecha y hora seleccionada {selectedOption}</Text>
+        </View>
         <Pressable key={7} style={styles.mainAction} onPress={() => {}}>
           <Text style={styles.mainActionText}>{"Reservar"}</Text>
         </Pressable>
+
         <View key={9} style={styles.ratingContainer}>
           <Text style={styles.label}>{numRatings} puntuaciones</Text>
           <StarRating
@@ -77,7 +119,7 @@ export const TourDetail = (props) => {
 
 const styles = StyleSheet.create({
   scrollView: {
-    padding: 16
+    padding: 16,
   },
   starts: {
     backgroundColor: "#4E598C",
@@ -86,11 +128,10 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     width: width - 32,
-    resizeMode: 'stretch'
+    resizeMode: "stretch",
   },
   columns: {
     flexDirection: "column",
-    
   },
   mainAction: {
     padding: 10,
@@ -135,7 +176,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 24,
   },
+  toggleButton: {
+    backgroundColor: "#F9C784",
+    marginVertical: 10,
+    padding: 10,
+    borderRadius: 40,
+    marginBottom: 20,
+    alignItems: "center",
+  },
   map: {
     height: 400,
     borderRadius: 15,
-  }});
+  },
+});

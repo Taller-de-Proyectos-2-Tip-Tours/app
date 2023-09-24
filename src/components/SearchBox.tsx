@@ -9,23 +9,18 @@ const SearchBox = ({ onSearch }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Buscar"
-        onChangeText={(text) => setSearchText(text)}
-        value={searchText}
-        onSubmitEditing={handleSearch}
-      />
-    </View>
+    <TextInput
+    style={styles.input}
+    placeholder="Buscar"
+    onChangeText={(text) => setSearchText(text)}
+    value={searchText}
+    onSubmitEditing={handleSearch}
+  />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    margin: 16,
-    alignSelf: 'stretch',
-  },
+
   input: {
     padding: 5,
     paddingHorizontal: 16,
@@ -33,6 +28,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     backgroundColor: '#F6F6F6',
     borderWidth: 1,
+    flex: 8,
   },
 });
 
