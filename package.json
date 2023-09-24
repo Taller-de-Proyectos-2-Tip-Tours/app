@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-picker/picker": "^2.5.1",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
     "@types/react": "~18.2.14",
@@ -18,6 +19,7 @@
     "react": "18.2.0",
     "react-datepicker": "^4.18.0",
     "react-native": "0.72.4",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-star-rating-widget": "^1.7.2",
     "typescript": "^5.1.3"

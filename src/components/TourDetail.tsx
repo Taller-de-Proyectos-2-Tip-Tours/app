@@ -31,8 +31,6 @@ export const TourDetail = (props) => {
     extraPhotos,
     mapPrototype,
     meetingPointDescription,
-    numReviews,
-    averageReviewRating,
     comments,
   } = props.data;
 
