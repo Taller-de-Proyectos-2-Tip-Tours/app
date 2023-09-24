@@ -4,9 +4,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from "./src/components/screens/HomeScreen";
 import TourListScreen from "./src/components/screens/TourListScreen";
 import TourScreen from "./src/components/screens/TourScreen";
+import {LogBox} from "react-native";
 
 
 const Stack = createStackNavigator();
+
+LogBox.ignoreLogs([
+  "ViewPropTypes will be removed",
+  "ColorPropType will be removed",
+  ])
 
 export default function App() {
   return (
