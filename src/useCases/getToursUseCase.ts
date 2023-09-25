@@ -41,7 +41,7 @@ export const getToursUseCase = async (filters) => {
           },
           {
             "user": "Lucas Rodriguez",
-            "comment": "El tour esta bien pero el guia no me parecio muy interesado en el tema."
+            "comment": "El guia no me parecio muy interesado en el tema."
           }
         ]
       }        

@@ -67,7 +67,10 @@ export const TourDetail = (props) => {
         <Text key={5} style={styles.title}>
           Cupo maximo {maxCapacity} personas
         </Text>
-        <View key={6} style={styles.row}>
+        <Text key={6} style={styles.label}>
+          Duración {duration} hs
+        </Text>
+        <View key={7} style={styles.row}>
           <Text style={styles.label}>{city}</Text>
           <Text style={styles.label}>El guia habla en: {language}</Text>
         </View>
@@ -89,11 +92,11 @@ export const TourDetail = (props) => {
           />
           <Text style={styles.label}>Fecha y hora seleccionada {'\n'} {selectedOption}</Text>
         </View>
-        <Pressable key={7} style={styles.toggleButton} onPress={() => {}}>
+        <Pressable key={9} style={styles.toggleButton} onPress={() => {}}>
           <Text style={styles.buttonText}>{"Reservar"}</Text>
         </Pressable>
 
-        <View key={9} style={styles.ratingContainer}>
+        <View key={10} style={styles.ratingContainer}>
           <Text style={styles.label}>{numRatings} puntuaciones</Text>
           <StarRating
             rating={averageRating}
@@ -102,7 +105,7 @@ export const TourDetail = (props) => {
             starSize={35}
           />
         </View>
-        <View key={10}> 
+        <View key={11}> 
           <MapView
             style={ styles.map }
             initialRegion={{
@@ -118,17 +121,17 @@ export const TourDetail = (props) => {
             />
           </MapView>
         </View>
-        <Text key={11} style={styles.title}>
+        <Text key={12} style={styles.title}>
           Punto de encuentro
         </Text>
-        <Text key={12} style={styles.label}>
+        <Text key={13} style={styles.label}>
           {meetingPointDescription}
         </Text>
-        <Text key={13} style={styles.title}>
+        <Text key={14} style={styles.title}>
           Comentarios
         </Text>
         {comments.map((item, index) => (
-          <Text key={14 + index} style={styles.comment}>
+          <Text key={15 + index} numberOfLines={2} style={styles.comment}>
             {item.user}: {item.comment}
           </Text>
         ))}
@@ -188,6 +191,7 @@ const styles = StyleSheet.create({
   comment: {
     fontSize: 14,
     marginTop: 6,
+    marginBottom: 4,
   },
   divider: {
     marginTop: 10,
