@@ -32,6 +32,8 @@ export const getToursUseCase = async (filters) => {
         "extraPhotos": item.otherImages,
         "mapPrototype": "map-prototype.jpg",
         "meetingPointDescription": item.meetingPoint,
+        "lat": item.lat,
+        "lon": item.lon,
         "comments": [
           {
             "user": "Juan Perez",

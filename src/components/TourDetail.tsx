@@ -13,6 +13,7 @@ import StarRating from "react-native-star-rating-widget";
 import { PhotoCarousel } from "./PhotoCarousel";
 import DateHourPicker from "./CheckboxDropdown";
 import CheckboxDropdown from "./CheckboxDropdown";
+import MapView, {Marker} from 'react-native-maps';
 
 const { width } = Dimensions.get("window");
 
@@ -32,6 +33,8 @@ export const TourDetail = (props) => {
     extraPhotos,
     mapPrototype,
     meetingPointDescription,
+    lat,
+    lon,
     comments,
   } = props.data;
 
@@ -99,11 +102,24 @@ export const TourDetail = (props) => {
             starSize={35}
           />
         </View>
-        <View key={10} style={styles.map}> 
-          <Image source={require("../../assets/map_preview.jpg")} />
+        <View key={10}> 
+          <MapView
+            style={ styles.map }
+            initialRegion={{
+              latitude: lat,
+              longitude: lon,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            <Marker
+              key={1}
+              coordinate={{latitude: lat, longitude: lon}}
+            />
+          </MapView>
         </View>
         <Text key={11} style={styles.title}>
-          Punto de encuentro
+          Punto de encuentro {lat} - {lon}
         </Text>
         <Text key={12} style={styles.label}>
           {meetingPointDescription}
@@ -195,7 +211,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   map: {
-    height: 200,
+    height: 250,
     width: "100%",
     marginTop: 10,
     borderRadius: 15,
