@@ -25,7 +25,7 @@ const TourDetailsRow = (props) => {
         <Image style={styles.thumbail} source={{uri: mainPhoto}}/>
         <View style={styles.columns}>
           <Text style={styles.title} numberOfLines={2} >{name}</Text> 
-          <Text>{city}</Text>
+          <Text style={styles.body}>{city}</Text>
         </View>
       </View>
       <View style={styles.divider} />
@@ -50,6 +50,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#004E98"
+  },
+  body: {
+    color: "#333333"
   },
   thumbail: {
     backgroundColor: "#F6F6F6",

@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from "./src/components/screens/HomeScreen";
 import TourListScreen from "./src/components/screens/TourListScreen";
 import TourScreen from "./src/components/screens/TourScreen";
-import {LogBox} from "react-native";
+import {LogBox, StyleSheet} from "react-native";
 
 
 const Stack = createStackNavigator();
@@ -25,3 +25,11 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "black",
+    alignItems: "center",
+  },
+});

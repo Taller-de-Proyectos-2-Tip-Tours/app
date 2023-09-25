@@ -73,7 +73,7 @@ export const TourDetail = (props) => {
             onPress={toggleDropdown}
             style={styles.toggleButton}
           >
-            <Text>Ver fechas disponibles</Text>
+            <Text style={styles.buttonText}>Elegir fecha</Text>
           </TouchableOpacity>
           <CheckboxDropdown
             options={availableDates.map(
@@ -84,10 +84,10 @@ export const TourDetail = (props) => {
             visible={dropdownVisible}
             onClose={toggleDropdown}
           />
-          <Text>Fecha y hora seleccionada {selectedOption}</Text>
+          <Text style={styles.label}>Fecha y hora seleccionada {'\n'} {selectedOption}</Text>
         </View>
-        <Pressable key={7} style={styles.mainAction} onPress={() => {}}>
-          <Text style={styles.mainActionText}>{"Reservar"}</Text>
+        <Pressable key={7} style={styles.toggleButton} onPress={() => {}}>
+          <Text style={styles.buttonText}>{"Reservar"}</Text>
         </Pressable>
 
         <View key={9} style={styles.ratingContainer}>
@@ -95,7 +95,7 @@ export const TourDetail = (props) => {
           <StarRating
             rating={averageRating}
             onChange={() => {}}
-            color="#4E598C"
+            color="#FFD700"
             starSize={35}
           />
         </View>
@@ -139,11 +139,11 @@ const styles = StyleSheet.create({
   },
   mainAction: {
     padding: 10,
-    paddingVertical: 16,
+    paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 24,
-    backgroundColor: "#4E598C",
+    backgroundColor: "#007BFF",
     borderRadius: 40,
   },
   mainActionText: {
@@ -155,13 +155,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
     marginTop: 12,
+    color: "#004E98"
   },
   label: {
-    fontSize: 14,
+    fontSize: 18,
     marginTop: 10,
+    color: "#333333"
+  },
+  buttonText: {
+    fontSize: 18,
+    color: "#333333"
   },
   comment: {
     fontSize: 14,
@@ -176,17 +182,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     padding: 16,
-    backgroundColor: `rgba(252, 175, 88, 0.6)`,
+    backgroundColor: `transparent`,
     borderRadius: 10,
-    marginTop: 24,
   },
   toggleButton: {
-    backgroundColor: "#F9C784",
+    backgroundColor: "#A9A9A9",
     marginVertical: 10,
     padding: 10,
     borderRadius: 40,
     marginBottom: 20,
     alignItems: "center",
+    justifyContent: "center",
   },
   map: {
     height: 200,
