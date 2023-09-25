@@ -119,7 +119,7 @@ export const TourDetail = (props) => {
           </MapView>
         </View>
         <Text key={11} style={styles.title}>
-          Punto de encuentro {lat} - {lon}
+          Punto de encuentro
         </Text>
         <Text key={12} style={styles.label}>
           {meetingPointDescription}
