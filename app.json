@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.codecrafter.TipTour",
+      "package": "com.codecrafter.tiptour",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
