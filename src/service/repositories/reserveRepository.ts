@@ -1,8 +1,8 @@
-import { API_URL_TOURS, serializeQuerys } from "../Const";
+import { API_URL_RESERVES, serializeQuerys } from "../Const";
 
 export const fetchDataFromApi = async (queryParams) => {
   try {
-    const response = await fetch(API_URL_TOURS + serializeQuerys(queryParams), {
+    const response = await fetch(API_URL_RESERVES + serializeQuerys(queryParams), {
       method: "GET",
       headers: {
         Accept: "application/json",

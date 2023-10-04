@@ -83,7 +83,7 @@ export const TourDetail = (props) => {
           </TouchableOpacity>
           <CheckboxDropdown
             options={availableDates.map(
-              (date) => `${date.date} - ${date.time}`
+              (bookings) => `${bookings.date.date} - ${bookings.date.time}`
             )}
             selectedOptions={selectedOption}
             onSelect={handleOptionSelect}
@@ -106,7 +106,8 @@ export const TourDetail = (props) => {
           />
         </View>
         <View key={11}> 
-          <MapView
+          {
+            /* <MapView
             style={ styles.map }
             initialRegion={{
               latitude: lat,
@@ -120,6 +121,9 @@ export const TourDetail = (props) => {
               coordinate={{latitude: lat, longitude: lon}}
             />
           </MapView>
+          */
+          }
+
         </View>
         <Text key={12} style={styles.title}>
           Punto de encuentro

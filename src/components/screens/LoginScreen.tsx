@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   View,
+  Text,
   ImageBackground,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -11,11 +12,30 @@ import {
   GoogleSignin,
   GoogleSigninButton,
 } from "@react-native-google-signin/google-signin";
+import Toast  from 'react-native-toast-message';
 
-export default function HomeScreen() {
+export default function LoginScreen() {
   const navigation = useNavigation();
   const image = {
     uri: "https://img.freepik.com/free-photo/couple-nature-consulting-map_23-2148927964.jpg?w=740&t=st=1695601076~exp=1695601676~hmac=696118ad8c827d23ac45aca40822cfd6118ccaae4fd62e75a9285b7df66a9607",
+  };
+  
+  const showLoginSuccess = (userName) => {
+    Toast.show({
+      type: 'success', // 'success', 'error', 'info', 'warning'
+      position: 'bottom', // 'top', 'bottom', 'center'
+      text1: `Bienvenido ${userName}`,
+      visibilityTime: 3000, // Duration in milliseconds
+    });
+  };
+  
+  const showLoginError = () => {
+    Toast.show({
+      type: 'error', // 'success', 'error', 'info', 'warning'
+      position: 'bottom', // 'top', 'bottom', 'center'
+      text1: `Hubo un error intentando iniciar tu sesión`,
+      visibilityTime: 3000, // Duration in milliseconds
+    });
   };
 
   const handleGoogleSignIn = async () => {
@@ -24,8 +44,10 @@ export default function HomeScreen() {
       const userInfo = await GoogleSignin.signIn();
       // You can use userInfo to access user details, like email and name.
       console.log("Google Sign-In Successful", userInfo);
-      navigation.navigate("TourList");
+      showLoginSuccess(userInfo.user.name)
+      navigation.replace('Home');
     } catch (error) {
+      showLoginError()
       console.error("Google Sign-In Error", error);
     }
   };
@@ -33,13 +55,19 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-        <StatusBar style="auto" />
+      <View style={styles.emptySpace} />
+        <View style={styles.card} >
+        
+        <Text style={styles.title}>
+          Bienvenid@ a Tip Tours, el lugar para planificar tus paseos
+        </Text>
         <GoogleSigninButton
-          style={{ width: 192, height: 48 }}
+          style={styles.signInButton}
           size={GoogleSigninButton.Size.Wide}
           color={GoogleSigninButton.Color.Light}
           onPress={handleGoogleSignIn}
         />
+        </View>
       </ImageBackground>
     </View>
   );
@@ -52,18 +80,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  mainAction: {
-    padding: 10,
-    paddingVertical: 16,
+  card: {
+    backgroundColor: "#4E598C82",
+    margin: 20,
+    borderRadius: 5,
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 24,
-    backgroundColor: "transparent",
-    borderRadius: 40,
+    justifyContent: 'flex-end',
+    flex: 1,
   },
-  mainActionText: {
-    color: "#F5F5DC",
+  title: {
+    backgroundColor: "#4E598CBA",
+    borderRadius: 5,
+    color: "#FFFFFF",
     fontSize: 24,
+    padding: 20,
+  },
+  emptySpace: {
+    flex: 1,
+  },
+  signInButton: {
+    height: 48,
+    marginVertical: 20,
+
   },
   image: {
     flex: 1,
