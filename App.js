@@ -25,7 +25,7 @@ function StackNavigator() {
     <Stack.Navigator >
       <Stack.Screen
         name="TourList"
-        options={{  headerShown: false }}
+        options={{ title: "Paseos" }}
         component={TourListScreen}
       />
       <Stack.Screen
@@ -44,11 +44,11 @@ function TabNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Paseos") {
+          if (route.name === "toursTab") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Mi perfil") {
+          } else if (route.name === "profileTab") {
             iconName = focused ? "person" : "person-outline";
-          } else if (route.name === "Mis Reservas") {
+          } else if (route.name === "bookingTab") {
             iconName = focused ? "book" : "book-outline";
           }
 
@@ -56,9 +56,9 @@ function TabNavigator() {
         },
       })}
     >
-      <Tab.Screen name="Paseos" component={StackNavigator} />
-      <Tab.Screen name="Mis Reservas" component={ReservesScreen} />
-      <Tab.Screen name="Mi perfil" component={ProfileScreen} />
+      <Tab.Screen name="toursTab" component={StackNavigator} options={{title: "Home", headerShown: false }} />
+      <Tab.Screen name="bookingTab" component={ReservesScreen} options={{title: "Mis reservas"}} />
+      <Tab.Screen name="profileTab" component={ProfileScreen} options={{title: "Mi perfil"}} />
     </Tab.Navigator>
   );
 }

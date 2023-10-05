@@ -26,7 +26,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.codecrafter.tip.tours",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "config":{
+        "googleMaps":{
+          "apiKey":"AIzaSyDN5vBJXbmtaljJjm6CCWkM9cVq3P23QXE"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

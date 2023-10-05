@@ -13,11 +13,18 @@ import StarRating from "react-native-star-rating-widget";
 import { PhotoCarousel } from "./PhotoCarousel";
 import DateHourPicker from "./CheckboxDropdown";
 import CheckboxDropdown from "./CheckboxDropdown";
-import MapView, {Marker} from 'react-native-maps';
+import MapView, { Marker } from "react-native-maps";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { postBookingUseCase } from "../useCases/getToursUseCase";
+import IntegerSelector from "./AmountSelector";
+import { transformDateToString } from "../useCases/utils";
+import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
 export const TourDetail = (props) => {
+  const navigation = useNavigation();
   const {
     name,
     duration,
@@ -40,13 +47,54 @@ export const TourDetail = (props) => {
 
   const [selectedOption, setSelectedOptions] = useState();
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [participants, setParticipants] = useState(1);
+
+  const handleIncrement = () => {
+    setParticipants(participants + 1);
+  };
+
+  const handleDecrement = () => {
+    if (participants > 0) {
+      setParticipants(participants - 1);
+    }
+  };
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  const handleOptionSelect = (option) => {
+  const handleDateSelection = (option) => {
     setSelectedOptions(option);
+    toggleDropdown();
+  };
+
+  const isReservButtonEnabled = () => selectedOption && participants > 0;
+
+  const showBookingSuccess = () => {
+    Toast.show({
+      type: 'success', // 'success', 'error', 'info', 'warning'
+      position: 'bottom', // 'top', 'bottom', 'center'
+      text1: `Se realizo la reserva correctamente`,
+      visibilityTime: 3000, // Duration in milliseconds
+    });
+  };
+
+  const handleBooking = async () => {
+    let currentUser = await GoogleSignin.getCurrentUser();
+    let body = {
+      tourId: props.data.id,
+      date: selectedOption,
+      traveler: {
+        name: currentUser.user.givenName,
+        email: currentUser.user.email,
+      },
+      people: participants,
+    };
+    let result = postBookingUseCase(body);
+    
+    showBookingSuccess();
+    navigation.navigate('bookingTab');
+  
   };
 
   return (
@@ -82,17 +130,35 @@ export const TourDetail = (props) => {
             <Text style={styles.buttonText}>Elegir fecha</Text>
           </TouchableOpacity>
           <CheckboxDropdown
-            options={availableDates.map(
-              (bookings) => `${bookings.date.date} - ${bookings.date.time}`
-            )}
+            options={availableDates.map((bookings) => bookings.date)}
             selectedOptions={selectedOption}
-            onSelect={handleOptionSelect}
+            onSelect={handleDateSelection}
             visible={dropdownVisible}
             onClose={toggleDropdown}
           />
-          <Text style={styles.label}>Fecha y hora seleccionada {'\n'} {selectedOption}</Text>
+          <Text style={styles.label}>
+            Fecha y hora seleccionada {"\n"}{" "}
+            {selectedOption ? transformDateToString(selectedOption) : ""}
+          </Text>
         </View>
-        <Pressable key={9} style={styles.toggleButton} onPress={() => {}}>
+        <View key={23}>
+          <Text>Cantidad de personas</Text>
+          <IntegerSelector
+            value={participants}
+            onIncrement={handleIncrement}
+            onDecrement={handleDecrement}
+          />
+        </View>
+        <Pressable
+          key={9}
+          style={[
+            styles.toggleButton,
+            {
+              backgroundColor: isReservButtonEnabled() ? "#4E598C" : "#A9A9A9",
+            },
+          ]}
+          onPress={handleBooking}
+        >
           <Text style={styles.buttonText}>{"Reservar"}</Text>
         </Pressable>
 
@@ -105,10 +171,9 @@ export const TourDetail = (props) => {
             starSize={35}
           />
         </View>
-        <View key={11}> 
-          {
-            /* <MapView
-            style={ styles.map }
+        <View key={11}>
+          <MapView
+            style={styles.map}
             initialRegion={{
               latitude: lat,
               longitude: lon,
@@ -116,14 +181,8 @@ export const TourDetail = (props) => {
               longitudeDelta: 0.0421,
             }}
           >
-            <Marker
-              key={1}
-              coordinate={{latitude: lat, longitude: lon}}
-            />
+            <Marker key={1} coordinate={{ latitude: lat, longitude: lon }} />
           </MapView>
-          */
-          }
-
         </View>
         <Text key={12} style={styles.title}>
           Punto de encuentro
@@ -181,16 +240,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginTop: 12,
-    color: "#004E98"
+    color: "#004E98",
   },
   label: {
     fontSize: 18,
     marginTop: 10,
-    color: "#333333"
+    color: "#333333",
   },
   buttonText: {
     fontSize: 18,
-    color: "#333333"
+    color: "#fff"
   },
   comment: {
     fontSize: 14,
@@ -210,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   toggleButton: {
-    backgroundColor: "#A9A9A9",
+    backgroundColor: "#4E598C",
     marginVertical: 10,
     padding: 10,
     borderRadius: 40,

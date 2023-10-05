@@ -39,7 +39,7 @@ const ReserveListRow = (props) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
-    margin: 16,
+    padding: 16,
   },
   row: {
     flexDirection: "row",
@@ -61,6 +61,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 1,
     backgroundColor: "#ccc",
-    marginHorizontal: 14
+    
   },
 });

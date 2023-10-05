@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { getReserves } from "../../useCases/getReservesUseCase";
 import { ReserveList } from "../ReserveList";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function ReservesScreen({ route }) {
   const [data, setData] = useState([]);
@@ -10,11 +11,11 @@ export default function ReservesScreen({ route }) {
 
   useEffect(() => {
     setLoading(true);
-    
+
     getReserves()
       .then((data) => {
         setData(data);
-        console.log(data)
+        console.log(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -26,15 +27,19 @@ export default function ReservesScreen({ route }) {
 
   return (
     <View style={styles.container}>
-    {loading ? (
-      <Text>Cargando</Text>
-    ) : error ? (
-      <Text>Error: {error}</Text>
-    ) : data.length == 0 ? (
-      <Text>No hay tours disponibles</Text>
-    ) : (
-      <ReserveList style={{ flex: 3 }} tours={data} />
-    )}
+      {loading ? (
+        <Spinner
+          visible={loading}
+          textContent={'Cargando...'}
+          textStyle={{ color: "white" }}
+          />
+      ) : error ? (
+        <Text >Error: {error}</Text>
+      ) : data.length == 0 ? (
+        <Text>No hay tours disponibles</Text>
+      ) : (
+        <ReserveList style={{ flex: 3 }} tours={data} />
+      )}
     </View>
   );
 }
@@ -43,8 +48,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    alignItems: "center",
-  }
+  },
 });
-
-
