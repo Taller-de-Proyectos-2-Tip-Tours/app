@@ -6,7 +6,7 @@ export const getReserves = async () => {
   try {
     const currentUser = await GoogleSignin.getCurrentUser();
     const data = await fetchDataFromApi({
-      travelerEmail: "mail@mail.com",
+      travelerEmail: currentUser.user.email,
     });
     console.log(data)
   

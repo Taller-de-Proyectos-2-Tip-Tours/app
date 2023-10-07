@@ -3,13 +3,14 @@ import { View, Text, StyleSheet } from "react-native";
 import { getReserves } from "../../useCases/getReservesUseCase";
 import { ReserveList } from "../ReserveList";
 import Spinner from "react-native-loading-spinner-overlay";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ReservesScreen({ route }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     setLoading(true);
 
     getReserves()
@@ -23,7 +24,7 @@ export default function ReservesScreen({ route }) {
         setError("Hubo un error cargando los datos :(");
         setLoading(false);
       });
-  }, []);
+  }, []));
 
   return (
     <View style={styles.container}>
@@ -34,9 +35,14 @@ export default function ReservesScreen({ route }) {
           textStyle={{ color: "white" }}
           />
       ) : error ? (
-        <Text >Error: {error}</Text>
+        <View style={styles.textContainer}> 
+          <Text>Error: {error}</Text>
+        </View>
+        
       ) : data.length == 0 ? (
-        <Text>No hay tours disponibles</Text>
+        <View style={styles.textContainer}> 
+        <Text  style={styles.textContainer}>No hay tours disponibles</Text>
+        </View>
       ) : (
         <ReserveList style={{ flex: 3 }} tours={data} />
       )}
@@ -47,6 +53,10 @@ export default function ReservesScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "white"
   },
+  textContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  }
 });

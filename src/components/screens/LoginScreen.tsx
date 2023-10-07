@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
   GoogleSigninButton,
+  statusCodes,
 } from "@react-native-google-signin/google-signin";
 import Toast  from 'react-native-toast-message';
 
@@ -51,6 +52,25 @@ export default function LoginScreen() {
       console.error("Google Sign-In Error", error);
     }
   };
+
+  const signInSilenty = async () => {
+    try {
+      const userInfo = await GoogleSignin.signInSilently();
+      showLoginSuccess(userInfo.user.name)
+      // You can use userInfo to access user details, like email and name.
+      console.log("Google Sign-In Successful silently", userInfo);
+      showLoginSuccess(userInfo.user.name)
+      navigation.replace('Home');
+    } catch (error) {
+      console.log(error);
+      if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+        handleGoogleSignIn()
+      } else {
+        // some other error
+      }
+    }
+  };
+
 
   return (
     <View style={styles.container}>

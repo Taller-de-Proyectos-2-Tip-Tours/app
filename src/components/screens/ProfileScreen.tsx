@@ -1,9 +1,11 @@
 import { firebase } from "@react-native-firebase/auth";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { Button, Text, View, StyleSheet, Image, Pressable } from "react-native";
 
 export default function ProfileScreen({ route }) {
+  const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const getCurrentUser = async () => {
     const currentUser = await GoogleSignin.getCurrentUser();
@@ -17,6 +19,7 @@ export default function ProfileScreen({ route }) {
 
   const signOut = () => {
     firebase.auth().signOut();
+    navigation.replace('Login');
   };
 
   return (

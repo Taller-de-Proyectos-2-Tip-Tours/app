@@ -4,7 +4,7 @@ import { TourList } from "../TourList";
 import SearchBox from "../SearchBox";
 import { getToursUseCase } from "../../useCases/getToursUseCase";
 import FilterModal from "../FilterModal";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import Spinner from "react-native-loading-spinner-overlay";
 
@@ -35,7 +35,7 @@ export default function TourListScreen() {
     setIsFilterModalOpen(false);
   };
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     setLoading(true);
     let filters = { ...selectedCities, ...nameFilter };
     getToursUseCase(filters)
@@ -48,7 +48,7 @@ export default function TourListScreen() {
         setError("Hubo un error cargando los datos :(");
         setLoading(false);
       });
-  }, [selectedCities, nameFilter]);
+  }, [selectedCities, nameFilter]));
 
   return (
     <View style={styles.container}>
