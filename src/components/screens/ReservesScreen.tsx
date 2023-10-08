@@ -41,7 +41,7 @@ export default function ReservesScreen({ route }) {
         
       ) : data.length == 0 ? (
         <View style={styles.textContainer}> 
-        <Text  style={styles.textContainer}>No hay tours disponibles</Text>
+        <Text  style={styles.textContainer}>No hay reservas hechas</Text>
         </View>
       ) : (
         <ReserveList style={{ flex: 3 }} tours={data} />
