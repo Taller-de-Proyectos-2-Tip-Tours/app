@@ -5,9 +5,9 @@ import LoginScreen from "./src/components/screens/LoginScreen";
 import TourListScreen from "./src/components/screens/TourListScreen";
 import TourScreen from "./src/components/screens/TourScreen";
 import ProfileScreen from "./src/components/screens/ProfileScreen";
-import { LogBox, StyleSheet } from "react-native";
+import { LogBox, StyleSheet, StatusBar } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import Toast from "react-native-toast-message";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import ReservesScreen from "./src/components/screens/ReservesScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,6 +20,8 @@ const ignoreWarns = [
   "exported from 'deprecated-react-native-prop-types'.",
   "Non-serializable values were found in the navigation state.",
   "VirtualizedLists should never be nested inside plain ScrollViews",
+  "Google Sign-In Error",
+  "Possible Unhandled Promise Rejection",
 ];
 
 const warn = console.warn;
@@ -38,10 +40,9 @@ GoogleSignin.configure();
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
 function StackNavigator() {
   return (
-    <Stack.Navigator >
+    <Stack.Navigator>
       <Stack.Screen
         name="TourList"
         options={{ title: "Paseos" }}
@@ -58,7 +59,7 @@ function StackNavigator() {
 
 function StackReserveNavigator() {
   return (
-    <Stack.Navigator >
+    <Stack.Navigator>
       <Stack.Screen
         name="ReserveList"
         options={{ title: "Mis reservas" }}
@@ -72,8 +73,6 @@ function StackReserveNavigator() {
     </Stack.Navigator>
   );
 }
-
-
 
 function TabNavigator() {
   return (
@@ -94,21 +93,53 @@ function TabNavigator() {
         },
       })}
     >
-      <Tab.Screen name="toursTab" component={StackNavigator} options={{title: "Home", headerShown: false }} />
-      <Tab.Screen name="bookingTab" component={StackReserveNavigator} options={{title: "Mis reservas", headerShown: false}} />
-      <Tab.Screen name="profileTab" component={ProfileScreen} options={{title: "Mi perfil"}} />
+      <Tab.Screen
+        name="toursTab"
+        component={StackNavigator}
+        options={{ title: "Home", headerShown: false }}
+      />
+      <Tab.Screen
+        name="bookingTab"
+        component={StackReserveNavigator}
+        options={{ title: "Mis reservas", headerShown: false }}
+      />
+      <Tab.Screen
+        name="profileTab"
+        component={ProfileScreen}
+        options={{ title: "Mi perfil" }}
+      />
     </Tab.Navigator>
   );
 }
 
+const toastConfig = {
+  success: (props) => (
+    <BaseToast style={{ width: "90%", ...props.style }} {...props} />
+  ),
+  error: (props) => (
+    <BaseToast style={{ width: "90%", ...props.style }} {...props} />
+  ),
+};
+
 export default function App() {
   return (
     <>
+      <StatusBar
+        animated={true}
+        backgroundColor="#4E598C"
+        barStyle="light-content"
+      />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
-            options={{ title: "Tip Tours" }}
+            options={{
+              title: "Tip Tours",
+              headerStyle: {
+                backgroundColor: "#4E598C",
+              },
+              headerTintColor: "#fff",
+            }}
             component={LoginScreen}
           />
           <Stack.Screen
@@ -118,7 +149,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-      <Toast />
+      <Toast config={toastConfig} />
     </>
   );
 }
