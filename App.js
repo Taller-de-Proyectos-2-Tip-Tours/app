@@ -37,6 +37,25 @@ function StackNavigator() {
   );
 }
 
+function StackReserveNavigator() {
+  return (
+    <Stack.Navigator >
+      <Stack.Screen
+        name="ReserveList"
+        options={{ title: "Mis reservas" }}
+        component={ReservesScreen}
+      />
+      <Stack.Screen
+        name="ReserveDetail"
+        options={{ title: "Detalle de la reserva" }}
+        component={TourScreen}
+      />
+    </Stack.Navigator>
+  );
+}
+
+
+
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -57,7 +76,7 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="toursTab" component={StackNavigator} options={{title: "Home", headerShown: false }} />
-      <Tab.Screen name="bookingTab" component={ReservesScreen} options={{title: "Mis reservas"}} />
+      <Tab.Screen name="bookingTab" component={StackReserveNavigator} options={{title: "Mis reservas", headerShown: false}} />
       <Tab.Screen name="profileTab" component={ProfileScreen} options={{title: "Mi perfil"}} />
     </Tab.Navigator>
   );

@@ -39,3 +39,24 @@ export const postDataToApi = async (url, queryParams, body) => {
     throw error;
   }
 };
+
+
+export const deleteDataToApi = async (url, queryParams, body) => {
+  try {
+    const response = await fetch(url + serializeQuerys(queryParams), {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      console.log(`Error response on deleteDataToApi ${JSON.stringify(response)}`);
+      throw new Error("Network response was not ok");
+    }
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};

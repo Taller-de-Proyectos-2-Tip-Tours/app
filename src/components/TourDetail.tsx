@@ -1,50 +1,27 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  Dimensions,
   Pressable,
   ScrollView,
-  Dimensions,
-  Image,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import StarRating from "react-native-star-rating-widget";
-import { PhotoCarousel } from "./PhotoCarousel";
-import DateHourPicker from "./CheckboxDropdown";
-import CheckboxDropdown from "./CheckboxDropdown";
 import MapView, { Marker } from "react-native-maps";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { postBookingUseCase } from "../useCases/getToursUseCase";
-import IntegerSelector from "./AmountSelector";
+import StarRating from "react-native-star-rating-widget";
 import { transformDateToString } from "../useCases/utils";
-import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
+import IntegerSelector from "./AmountSelector";
+import CheckboxDropdown from "./CheckboxDropdown";
+import { PhotoCarousel } from "./PhotoCarousel";
 
 const { width } = Dimensions.get("window");
 
 export const TourDetail = (props) => {
-  const navigation = useNavigation();
-  const {
-    name,
-    duration,
-    description,
-    maxCapacity,
-    city,
-    language,
-    guideName,
-    numRatings,
-    averageRating,
-    availableDates,
-    mainPhoto,
-    extraPhotos,
-    mapPrototype,
-    meetingPointDescription,
-    stops,
-    comments,
-  } = props.data;
+  const { isReserve, handleBooking, reservedDate, handleCancelBooking } = props;
 
-  const [selectedOption, setSelectedOptions] = useState();
+  const [tourDetail, setTourDetail] = useState(props.tourDetail);
+  const [selectedOption, setSelectedOptions] = useState(reservedDate);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [participants, setParticipants] = useState(1);
 
@@ -69,83 +46,73 @@ export const TourDetail = (props) => {
 
   const isReservButtonEnabled = () => selectedOption && participants > 0;
 
-  const showBookingSuccess = () => {
-    Toast.show({
-      type: "success", // 'success', 'error', 'info', 'warning'
-      position: "bottom", // 'top', 'bottom', 'center'
-      text1: `Se realizo la reserva correctamente`,
-      visibilityTime: 3000, // Duration in milliseconds
-    });
-  };
-
-  const handleBooking = async () => {
-    let currentUser = await GoogleSignin.getCurrentUser();
-    let body = {
-      tourId: props.data.id,
-      date: selectedOption,
-      traveler: {
-        name: currentUser.user.givenName,
-        email: currentUser.user.email,
-      },
-      people: participants,
-    };
-    let result = postBookingUseCase(body);
-
-    showBookingSuccess();
-    navigation.navigate("bookingTab");
-  };
-
   return (
     <View style={styles.columns}>
       <ScrollView style={styles.scrollView}>
         <PhotoCarousel
           key={1}
           style={styles.image}
-          photos={[mainPhoto, ...extraPhotos]}
+          photos={[tourDetail.mainPhoto, ...tourDetail.extraPhotos]}
         />
         <Text key={2} style={styles.title}>
-          {name}
+          {tourDetail.name}
         </Text>
         <Text key={3} style={styles.label}>
-          {description}
+          {tourDetail.description}
         </Text>
         <View key={4} style={styles.divider} />
         <Text key={5} style={styles.title}>
-          Cupo maximo {maxCapacity} personas
+          Cupo maximo {tourDetail.maxCapacity} personas
         </Text>
         <Text key={6} style={styles.label}>
-          Duración {duration} hs
+          Duración {tourDetail.duration} hs
         </Text>
         <View key={7} style={styles.row}>
-          <Text style={styles.label}>{city}</Text>
-          <Text style={styles.label}>El guia habla en: {language}</Text>
+          <Text style={styles.label}>{tourDetail.city}</Text>
+          <Text style={styles.label}>
+            El guia habla en: {tourDetail.language}
+          </Text>
         </View>
         <View key={8}>
-          <TouchableOpacity
-            onPress={toggleDropdown}
-            style={styles.toggleButton}
-          >
-            <Text style={styles.buttonText}>Elegir fecha</Text>
-          </TouchableOpacity>
-          <CheckboxDropdown
-            options={availableDates.map((bookings) => bookings.date)}
-            selectedOptions={selectedOption}
-            onSelect={handleDateSelection}
-            visible={dropdownVisible}
-            onClose={toggleDropdown}
-          />
+          {!isReserve ? (
+            <>
+              <TouchableOpacity
+                onPress={toggleDropdown}
+                style={styles.toggleButton}
+              >
+                <Text style={styles.buttonText}>Elegir fecha</Text>
+              </TouchableOpacity>
+              <CheckboxDropdown
+                options={tourDetail.availableDates.map(
+                  (bookings) => bookings.date
+                )}
+                selectedOptions={selectedOption}
+                onSelect={handleDateSelection}
+                visible={dropdownVisible}
+                onClose={toggleDropdown}
+              />
+            </>
+          ) : (
+            <></>
+          )}
           <Text style={styles.label}>
             Fecha y hora seleccionada {"\n"}{" "}
             {selectedOption ? transformDateToString(selectedOption) : ""}
           </Text>
         </View>
         <View key={23}>
-          <Text>Cantidad de personas</Text>
-          <IntegerSelector
-            value={participants}
-            onIncrement={handleIncrement}
-            onDecrement={handleDecrement}
-          />
+          {!isReserve ? (
+            <>
+              <Text>Cantidad de personas</Text>
+              <IntegerSelector
+                value={participants}
+                onIncrement={handleIncrement}
+                onDecrement={handleDecrement}
+              />
+            </>
+          ) : (
+            <></>
+          )}
         </View>
         <Pressable
           key={9}
@@ -155,15 +122,23 @@ export const TourDetail = (props) => {
               backgroundColor: isReservButtonEnabled() ? "#4E598C" : "#A9A9A9",
             },
           ]}
-          onPress={handleBooking}
+          onPress={() => {
+            if (isReserve) {
+              handleCancelBooking(selectedOption);
+            } else {
+              handleBooking(selectedOption, participants);
+            }
+          }}
         >
-          <Text style={styles.buttonText}>{"Reservar"}</Text>
+          <Text style={styles.buttonText}>
+            {isReserve ? "Cancelar reserva" : "Reservar"}
+          </Text>
         </Pressable>
 
         <View key={10} style={styles.ratingContainer}>
-          <Text style={styles.label}>{numRatings} puntuaciones</Text>
+          <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
           <StarRating
-            rating={averageRating}
+            rating={tourDetail.averageRating}
             onChange={() => {}}
             color="#FFD700"
             starSize={35}
@@ -173,13 +148,13 @@ export const TourDetail = (props) => {
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude: stops[0].lat,
-              longitude: stops[0].lon,
+              latitude: tourDetail.stops[0].lat,
+              longitude: tourDetail.stops[0].lon,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
           >
-            {stops.map((marker, index) => (
+            {tourDetail.stops.map((marker, index) => (
               <Marker
                 key={index}
                 coordinate={{ latitude: marker.lat, longitude: marker.lon }}
@@ -193,12 +168,12 @@ export const TourDetail = (props) => {
           Punto de encuentro
         </Text>
         <Text key={13} style={styles.label}>
-          {meetingPointDescription}
+          {tourDetail.meetingPointDescription}
         </Text>
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        {comments.map((item, index) => (
+        {tourDetail.comments.map((item, index) => (
           <Text key={15 + index} numberOfLines={2} style={styles.comment}>
             {item.user}: {item.comment}
           </Text>
