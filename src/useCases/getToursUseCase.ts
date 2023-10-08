@@ -1,16 +1,5 @@
 import { fetchDataFromApi } from "../service/repositories/toursRespository";
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-  const dateFormatted = date.toLocaleDateString('en-US', options);
-  const timeFormatted = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-  return {
-    date: dateFormatted,
-    time: timeFormatted,
-  };
-}
+import { formatDate } from "./utils";
 
 export const getToursUseCase = async (filters) => {
   try {
@@ -21,16 +10,22 @@ export const getToursUseCase = async (filters) => {
         "name":  item.name,
         "duration": item.duration,
         "description": item.description,
-        "maxCapacity": 20,
+        "considerations": item.considerations,
+        "maxCapacity": item.maxParticipants,
         "city": item.city,
         "language": item.language ? item.language : "Español",
         "guideName": "Juan Perez",
         "numRatings": 25,
         "averageRating": 4.5,
-        "availableDates": item.dates?.map((date) => formatDate(date)) || [],
+        "availableDates": item.dates?.map((bookings) => (
+          {
+            "people": bookings.people,
+            "state": bookings.state,
+            "date": formatDate(bookings.date)
+          })
+        ) || [],
         "mainPhoto": item.mainImage,
         "extraPhotos": item.otherImages,
-        "mapPrototype": "map-prototype.jpg",
         "meetingPointDescription": item.meetingPoint,
         "lat": item.lat,
         "lon": item.lon,
@@ -51,3 +46,5 @@ export const getToursUseCase = async (filters) => {
     throw error;
   }
 };
+
+

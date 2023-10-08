@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "314938900863",
+    "project_id": "tip-tours-df5b5",
+    "storage_bucket": "tip-tours-df5b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314938900863:android:74cd997b6b303cbaae1a4a",
+        "android_client_info": {
+          "package_name": "com.codecrafter.tip.tours"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314938900863-so9q2k4094m5sb951pfiifmm1p7jssrq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN5vBJXbmtaljJjm6CCWkM9cVq3P23QXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314938900863-so9q2k4094m5sb951pfiifmm1p7jssrq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
