@@ -40,8 +40,7 @@ export const TourDetail = (props) => {
     extraPhotos,
     mapPrototype,
     meetingPointDescription,
-    lat,
-    lon,
+    stops,
     comments,
   } = props.data;
 
@@ -72,8 +71,8 @@ export const TourDetail = (props) => {
 
   const showBookingSuccess = () => {
     Toast.show({
-      type: 'success', // 'success', 'error', 'info', 'warning'
-      position: 'bottom', // 'top', 'bottom', 'center'
+      type: "success", // 'success', 'error', 'info', 'warning'
+      position: "bottom", // 'top', 'bottom', 'center'
       text1: `Se realizo la reserva correctamente`,
       visibilityTime: 3000, // Duration in milliseconds
     });
@@ -91,10 +90,9 @@ export const TourDetail = (props) => {
       people: participants,
     };
     let result = postBookingUseCase(body);
-    
+
     showBookingSuccess();
-    navigation.navigate('bookingTab');
-  
+    navigation.navigate("bookingTab");
   };
 
   return (
@@ -175,13 +173,20 @@ export const TourDetail = (props) => {
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude: lat,
-              longitude: lon,
+              latitude: stops[0].lat,
+              longitude: stops[0].lon,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
           >
-            <Marker key={1} coordinate={{ latitude: lat, longitude: lon }} />
+            {stops.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: marker.lat, longitude: marker.lon }}
+                title={marker.tag}
+                // description={marker.description}
+              />
+            ))}
           </MapView>
         </View>
         <Text key={12} style={styles.title}>
@@ -249,7 +254,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: "#fff"
+    color: "#fff",
   },
   comment: {
     fontSize: 14,
