@@ -41,6 +41,7 @@ export default function TourListScreen() {
     getToursUseCase(filters)
       .then((data) => {
         setData(data);
+        setError(null);
         setLoading(false);
       })
       .catch((err) => {

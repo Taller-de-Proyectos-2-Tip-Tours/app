@@ -14,6 +14,7 @@ import { transformDateToString } from "../useCases/utils";
 import IntegerSelector from "./AmountSelector";
 import CheckboxDropdown from "./CheckboxDropdown";
 import { PhotoCarousel } from "./PhotoCarousel";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
@@ -21,7 +22,7 @@ export const TourDetail = (props) => {
   const { isReserve, handleBooking, reservedDate, handleCancelBooking } = props;
 
   const [tourDetail, setTourDetail] = useState(props.tourDetail);
-  const [selectedOption, setSelectedOptions] = useState(reservedDate);
+  const [reserveDate, setReserveDates] = useState(reservedDate);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [participants, setParticipants] = useState(1);
 
@@ -40,11 +41,21 @@ export const TourDetail = (props) => {
   };
 
   const handleDateSelection = (option) => {
-    setSelectedOptions(option);
+    setReserveDates(option);
     toggleDropdown();
   };
 
-  const isReservButtonEnabled = () => selectedOption && participants > 0;
+  const isButtonEnabled = () =>
+    reserveDate && participants > 0 && !isReserveButtonDisabled();
+
+  const isReserveButtonDisabled = () => {
+    if (!isReserve) return false;
+    const today = new Date();
+    const reserveDate = new Date(reservedDate);
+    const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
+    const reserveTimestap = reserveDate.getTime() - twentyFourHoursInMilliseconds;
+    return reserveTimestap <= today.getTime();
+  };
 
   return (
     <View style={styles.columns}>
@@ -54,13 +65,21 @@ export const TourDetail = (props) => {
           style={styles.image}
           photos={[tourDetail.mainPhoto, ...tourDetail.extraPhotos]}
         />
-        <Text key={2} style={styles.title}>
+
+        <View key={2} style={styles.row}>
+          <Icon name="map" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.city}</Text>
+          <Icon name="language" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.language}</Text>
+        </View>
+
+        <Text key={3} style={styles.title}>
           {tourDetail.name}
         </Text>
-        <Text key={3} style={styles.label}>
+        <Text key={4} style={styles.label}>
           {tourDetail.description}
         </Text>
-        <View key={4} style={styles.divider} />
+        {/* <View key={4} style={styles.divider} />
         <Text key={5} style={styles.title}>
           Cupo maximo {tourDetail.maxCapacity} personas
         </Text>
@@ -72,6 +91,14 @@ export const TourDetail = (props) => {
           <Text style={styles.label}>
             El guia habla en: {tourDetail.language}
           </Text>
+        </View> */}
+        <View key={5} style={styles.row}>
+          <Icon name="map-marker" size={25} color="#4E598C" />
+          <Text style={styles.label2}>
+            {tourDetail.meetingPointDescription}
+          </Text>
+          <Icon name="clock-o" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.duration}</Text>
         </View>
         <View key={8}>
           {!isReserve ? (
@@ -83,22 +110,28 @@ export const TourDetail = (props) => {
                 <Text style={styles.buttonText}>Elegir fecha</Text>
               </TouchableOpacity>
               <CheckboxDropdown
-                options={tourDetail.availableDates.map(
-                  (bookings) => bookings.date
-                )}
-                selectedOptions={selectedOption}
+                options={tourDetail.availableDates}
+                selectedOptions={reserveDate}
                 onSelect={handleDateSelection}
                 visible={dropdownVisible}
                 onClose={toggleDropdown}
               />
+              {reserveDate && (
+                <Text style={styles.label3}>
+                  Fecha y hora seleccionada {"\n"}{" "}
+                  {reserveDate ? transformDateToString(reserveDate.date) : ""}
+                </Text>
+              )}
             </>
           ) : (
-            <></>
+            <>
+              {/* aca hay que buscar la menera de mostrar la fecha de la reserva */}
+              <Text style={styles.label3}>
+                Fecha y hora seleccionada {"\n"}{" "}
+                {reserveDate ? transformDateToString(reservedDate) : ""}
+              </Text>
+            </>
           )}
-          <Text style={styles.label}>
-            Fecha y hora seleccionada {"\n"}{" "}
-            {selectedOption ? transformDateToString(selectedOption) : ""}
-          </Text>
         </View>
         <View key={23}>
           {!isReserve ? (
@@ -119,14 +152,18 @@ export const TourDetail = (props) => {
           style={[
             styles.toggleButton,
             {
-              backgroundColor: isReservButtonEnabled() ? "#4E598C" : "#A9A9A9",
+              backgroundColor: isButtonEnabled() ? "#4E598C" : "#A9A9A9",
             },
           ]}
           onPress={() => {
-            if (isReserve) {
-              handleCancelBooking(selectedOption);
-            } else {
-              handleBooking(selectedOption, participants);
+            if (reserveDate) {
+              // Verifica si reserveDate tiene un valor
+              if (isReserve) {
+                if(!isReserveButtonDisabled())
+                  handleCancelBooking(reserveDate.date);
+              } else {
+                handleBooking(reserveDate.date, participants);
+              }
             }
           }}
         >
@@ -134,6 +171,19 @@ export const TourDetail = (props) => {
             {isReserve ? "Cancelar reserva" : "Reservar"}
           </Text>
         </Pressable>
+        <>
+        {isReserveButtonDisabled() && (
+          <Text
+            style={[
+              styles.label3,
+              {
+                color: "red",
+              },
+            ]}
+          >
+            Solo se puede cancelar una reserva 24hs antes de su inicio
+          </Text>
+        )}</>
 
         <View key={10} style={styles.ratingContainer}>
           <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
@@ -164,12 +214,12 @@ export const TourDetail = (props) => {
             ))}
           </MapView>
         </View>
-        <Text key={12} style={styles.title}>
+        {/* <Text key={12} style={styles.title}>
           Punto de encuentro
         </Text>
         <Text key={13} style={styles.label}>
           {tourDetail.meetingPointDescription}
-        </Text>
+        </Text> */}
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
@@ -215,6 +265,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
@@ -226,6 +278,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 10,
     color: "#333333",
+  },
+  label2: {
+    fontSize: 18,
+    color: "#333333",
+    textAlign: "right",
+  },
+  label3: {
+    fontSize: 14,
+    color: "#333333",
+    textAlign: "center",
   },
   buttonText: {
     fontSize: 18,

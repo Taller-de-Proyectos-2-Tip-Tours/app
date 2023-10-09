@@ -114,10 +114,12 @@ function TabNavigator() {
 
 const toastConfig = {
   success: (props) => (
-    <BaseToast style={{ width: "90%", ...props.style }} {...props} />
+    <BaseToast style={{ width: "90%", ...props.style}} {...props} />
   ),
   error: (props) => (
-    <BaseToast style={{ width: "90%", ...props.style }} {...props} />
+    <BaseToast style={{ width: "90%",  borderLeftColor: 'red', ...props.style }}
+    text1NumberOfLines={2}
+     {...props} />
   ),
 };
 
