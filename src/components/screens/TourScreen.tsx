@@ -4,11 +4,10 @@ import { TourDetail } from "../TourDetail";
 import Toast from "react-native-toast-message";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { getToursUseCase } from "../../useCases/getToursUseCase";
+import { getTourUseCase } from "../../useCases/getToursUseCase";
 import { cancelBookingUseCase } from "../../useCases/cancelBookingUseCase";
 import { postBookingUseCase } from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
-import { getReserves } from "../../useCases/getReservesUseCase";
 
 export default function TourScreen({ route }) {
   let tour = route.params.tour;
@@ -84,9 +83,9 @@ export default function TourScreen({ route }) {
 
       console.log("getting tour detail for reserve with tourId", tourId);
       setLoading(true);
-      getToursUseCase({ id: tourId })
+      getTourUseCase(tourId)
         .then((data) => {
-          setTourDetail(data[0]);
+          setTourDetail(data);
           setLoading(false);
           console.log("getting tour detail successfully", tourId);
         })
