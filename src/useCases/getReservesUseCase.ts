@@ -6,15 +6,16 @@ export const getReserves = async () => {
   try {
     const currentUser = await GoogleSignin.getCurrentUser();
     const data = await fetchDataFromApi({
-      travelerEmail: "mail@mail.com",
+      travelerEmail: currentUser.user.email,
     });
     console.log(data)
   
     return data.map((item) => ({
       "id": item._id.$oid,
       "tourId": item.tourId,
-      "date": formatDate(item.date),
+      "date":  item.date,
       "people": item.people,
+      "name": item.tourName,
     }));
   } catch (error) {
     console.log(`Error on getMyReserves ${error}`);

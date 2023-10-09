@@ -1,4 +1,5 @@
-import { fetchDataFromApi } from "../service/repositories/toursRespository";
+import { API_URL_RESERVES, API_URL_TOURS } from "../service/Const";
+import { deleteDataToApi, fetchDataFromApi, postDataToApi } from "../service/repositories/toursRespository";
 import { formatDate } from "./utils";
 
 export const getToursUseCase = async (filters) => {
@@ -21,14 +22,13 @@ export const getToursUseCase = async (filters) => {
           {
             "people": bookings.people,
             "state": bookings.state,
-            "date": formatDate(bookings.date)
+            "date": bookings.date
           })
         ) || [],
         "mainPhoto": item.mainImage,
         "extraPhotos": item.otherImages,
         "meetingPointDescription": item.meetingPoint,
-        "lat": item.lat,
-        "lon": item.lon,
+        "stops" : item.stops,
         "comments": [
           {
             "user": "Juan Perez",
@@ -48,3 +48,24 @@ export const getToursUseCase = async (filters) => {
 };
 
 
+export const postBookingUseCase = async (body) => {
+  try {
+    console.log(`postBookingUseCase ${JSON.stringify(body)}`);
+    const data = await postDataToApi(API_URL_RESERVES, undefined, body);
+    return data
+  } catch (error) {
+    console.log(`Error on postBookingUseCase ${JSON.stringify(error)}`);
+    throw error;
+  }
+};
+
+export const cancelBookingUseCase = async (id) => {
+  try {
+    console.log(`cancelBookingUseCase ${id}`);
+    const data = await deleteDataToApi(API_URL_RESERVES + `/${id}`, undefined, undefined);
+    return data
+  } catch (error) {
+    console.log(`Error on cancelBookingUseCase ${JSON.stringify(error)}`);
+    throw error;
+  }
+};

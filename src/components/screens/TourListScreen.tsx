@@ -4,8 +4,9 @@ import { TourList } from "../TourList";
 import SearchBox from "../SearchBox";
 import { getToursUseCase } from "../../useCases/getToursUseCase";
 import FilterModal from "../FilterModal";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function TourListScreen() {
   const navigation = useNavigation();
@@ -23,10 +24,10 @@ export default function TourListScreen() {
   };
 
   const applyNameFilters = (name) => {
-    if(name == "") {
+    if (name == "") {
       setNameFilter(undefined);
     } else {
-      setNameFilter({name: name});
+      setNameFilter({ name: name });
     }
   };
 
@@ -34,9 +35,9 @@ export default function TourListScreen() {
     setIsFilterModalOpen(false);
   };
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     setLoading(true);
-    let filters = {...selectedCities, ...nameFilter}
+    let filters = { ...selectedCities, ...nameFilter };
     getToursUseCase(filters)
       .then((data) => {
         setData(data);
@@ -47,7 +48,7 @@ export default function TourListScreen() {
         setError("Hubo un error cargando los datos :(");
         setLoading(false);
       });
-  }, [selectedCities, nameFilter]);
+  }, [selectedCities, nameFilter]));
 
   return (
     <View style={styles.container}>
@@ -70,7 +71,11 @@ export default function TourListScreen() {
         />
       </View>
       {loading ? (
-        <Text>Cargando</Text>
+        <Spinner
+          visible={loading}
+          textContent={"Cargando..."}
+          textStyle={{ color: "white" }}
+        />
       ) : error ? (
         <Text>Error: {error}</Text>
       ) : data.length == 0 ? (
