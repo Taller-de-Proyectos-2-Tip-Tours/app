@@ -20,7 +20,7 @@ export const getToursUseCase = async (filters) => {
         "averageRating": 4.5,
         "availableDates": item.dates?.map((bookings) => (
           {
-            "people": bookings.people,
+            "people": item.maxParticipants - bookings.people,
             "state": bookings.state,
             "date": bookings.date
           })

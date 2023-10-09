@@ -59,7 +59,7 @@ export const TourDetail = (props) => {
       <View key={2} style={styles.row}>
           <Icon name="map" size={25} color="#4E598C" />
           <Text style={styles.label2}>{tourDetail.city}</Text>
-          <Icon name="user" size={25} color="#4E598C" />
+          <Icon name="language" size={25} color="#4E598C" />
           <Text style={styles.label2}>{tourDetail.language}</Text>
       </View>
 
@@ -98,9 +98,7 @@ export const TourDetail = (props) => {
                 <Text style={styles.buttonText}>Elegir fecha</Text>
               </TouchableOpacity>
               <CheckboxDropdown
-                options={tourDetail.availableDates.map(
-                  (bookings) => bookings.date
-                )}
+                options={tourDetail.availableDates}
                 selectedOptions={selectedOption}
                 onSelect={handleDateSelection}
                 visible={dropdownVisible}
@@ -117,7 +115,7 @@ export const TourDetail = (props) => {
           {selectedOption && (
             <Text style={styles.label3}>
               Fecha y hora seleccionada {"\n"}{" "}
-              {selectedOption ? transformDateToString(selectedOption) : ""}
+              {selectedOption ? transformDateToString(selectedOption.date) : ""}
             </Text>
           )}
         </View>
@@ -145,9 +143,9 @@ export const TourDetail = (props) => {
           ]}
           onPress={() => {
             if (isReserve) {
-              handleCancelBooking(selectedOption);
+              handleCancelBooking(selectedOption.date);
             } else {
-              handleBooking(selectedOption, participants);
+              handleBooking(selectedOption.date, participants);
             }
           }}
         >
