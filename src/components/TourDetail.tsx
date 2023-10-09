@@ -14,6 +14,7 @@ import { transformDateToString } from "../useCases/utils";
 import IntegerSelector from "./AmountSelector";
 import CheckboxDropdown from "./CheckboxDropdown";
 import { PhotoCarousel } from "./PhotoCarousel";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
@@ -54,13 +55,21 @@ export const TourDetail = (props) => {
           style={styles.image}
           photos={[tourDetail.mainPhoto, ...tourDetail.extraPhotos]}
         />
+
+      <View key={2} style={styles.row}>
+          <Icon name="map" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.city}</Text>
+          <Icon name="user" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.language}</Text>
+      </View>
+
         <Text key={2} style={styles.title}>
           {tourDetail.name}
         </Text>
         <Text key={3} style={styles.label}>
           {tourDetail.description}
         </Text>
-        <View key={4} style={styles.divider} />
+        {/* <View key={4} style={styles.divider} />
         <Text key={5} style={styles.title}>
           Cupo maximo {tourDetail.maxCapacity} personas
         </Text>
@@ -72,6 +81,12 @@ export const TourDetail = (props) => {
           <Text style={styles.label}>
             El guia habla en: {tourDetail.language}
           </Text>
+        </View> */}
+        <View key={5} style={styles.row}>
+          <Icon name="map-marker" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.meetingPointDescription}</Text>
+          <Icon name="clock-o" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.duration}</Text>
         </View>
         <View key={8}>
           {!isReserve ? (
@@ -95,10 +110,16 @@ export const TourDetail = (props) => {
           ) : (
             <></>
           )}
-          <Text style={styles.label}>
+          {/* <Text style={styles.label}>
             Fecha y hora seleccionada {"\n"}{" "}
             {selectedOption ? transformDateToString(selectedOption) : ""}
-          </Text>
+          </Text> */}
+          {selectedOption && (
+            <Text style={styles.label3}>
+              Fecha y hora seleccionada {"\n"}{" "}
+              {selectedOption ? transformDateToString(selectedOption) : ""}
+            </Text>
+          )}
         </View>
         <View key={23}>
           {!isReserve ? (
@@ -215,6 +236,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
+    alignItems: 'center', 
   },
   title: {
     fontSize: 24,
@@ -226,6 +249,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 10,
     color: "#333333",
+  },
+  label2: {
+    fontSize: 18,
+    color: "#333333",
+    textAlign: "right",
+  },
+  label3: {
+    fontSize: 14,
+    color: "#333333",
+    textAlign: "center",
   },
   buttonText: {
     fontSize: 18,

@@ -28,6 +28,15 @@ export default function TourScreen({ route }) {
     });
   };
 
+  const showBookingError = () => {
+    Toast.show({
+      type: "success", // 'success', 'error', 'info', 'warning'
+      position: "bottom", // 'top', 'bottom', 'center'
+      text1: `No se pudo realizar la reserva`,
+      visibilityTime: 3000, // Duration in milliseconds
+    });
+  };
+
   const handleBooking = async (selectedOption, participants) => {
     let currentUser = await GoogleSignin.getCurrentUser();
     let body = {
@@ -39,15 +48,20 @@ export default function TourScreen({ route }) {
       },
       people: participants,
     };
-    let result = postBookingUseCase(body);
+    let result = await postBookingUseCase(body);
+    //console.log(result); 
+    //if (result.success === "La reserva fue creada con éxito.") {
+      showBookingSuccess();
 
-    showBookingSuccess();
-    setTimeout(() => {
-      navigation.navigate("bookingTab");
-    }, 2000);
+      setTimeout(() => {
+        navigation.navigate("bookingTab");
+      }, 2000);
+    //} else {
+    //  showBookingError();
+    //}
   };
 
-  const handleCancelBooking = async () => {
+   const handleCancelBooking = async () => {
     cancelBookingUseCase(reserveId);
     Toast.show({
       type: "success", // 'success', 'error', 'info', 'warning'
