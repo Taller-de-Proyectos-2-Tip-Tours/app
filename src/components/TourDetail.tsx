@@ -104,20 +104,24 @@ export const TourDetail = (props) => {
                 visible={dropdownVisible}
                 onClose={toggleDropdown}
               />
+              {selectedOption && (
+              <Text style={styles.label3}>
+                Fecha y hora seleccionada {"\n"}{" "}
+                {selectedOption ? transformDateToString(selectedOption.date) : ""}
+              </Text>
+          )}
             </>
           ) : (
-            <></>
+            <>
+                {/* aca hay que buscar la menera de mostrar la fecha de la reserva */}
+                <Text style={styles.label3}>
+                Fecha y hora seleccionada {"\n"}{" "}
+                {selectedOption ? transformDateToString(reservedDate) : ""}
+              </Text>
+            </>
           )}
-          {/* <Text style={styles.label}>
-            Fecha y hora seleccionada {"\n"}{" "}
-            {selectedOption ? transformDateToString(selectedOption) : ""}
-          </Text> */}
-          {selectedOption && (
-            <Text style={styles.label3}>
-              Fecha y hora seleccionada {"\n"}{" "}
-              {selectedOption ? transformDateToString(selectedOption.date) : ""}
-            </Text>
-          )}
+          
+      
         </View>
         <View key={23}>
           {!isReserve ? (
