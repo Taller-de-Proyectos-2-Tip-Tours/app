@@ -7,6 +7,48 @@ import {
   FlatList,
   StyleSheet,
 } from 'react-native';
+import { transformDateToString } from '../useCases/utils';
+
+// const CheckboxDropdown = ({ options, selectedOptions, onSelect, visible, onClose }) => {
+//   return (
+//     <Modal
+//       animationType="slide"
+//       transparent={true}
+//       visible={visible}
+//       onRequestClose={onClose}
+//     >
+//       <View style={styles.container}>
+//         <View style={styles.dropdown}>
+//           <FlatList
+//             data={options}
+//             keyExtractor={(item) => transformDateToString(item)}
+//             renderItem={({ item }) => (
+//               <TouchableOpacity
+//                 onPress={() => onSelect(item) }
+//                 style={styles.checkboxItem}
+//               >
+//                 <Text>{transformDateToString(item)}</Text>
+//                 <View
+//                   style={[
+//                     styles.checkbox,
+//                     {
+//                       backgroundColor: selectedOptions == item 
+//                         ? '#4E598C'
+//                         : 'white',
+//                     },
+//                   ]}
+//                 />
+//               </TouchableOpacity>
+//             )}
+//           />
+//           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+//             <Text>Cerrar</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//     </Modal>
+//   );
+// };
 
 const CheckboxDropdown = ({ options, selectedOptions, onSelect, visible, onClose }) => {
   return (
@@ -20,19 +62,19 @@ const CheckboxDropdown = ({ options, selectedOptions, onSelect, visible, onClose
         <View style={styles.dropdown}>
           <FlatList
             data={options}
-            keyExtractor={(item) => item}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => onSelect(item)}
+                onPress={() => onSelect(item) }
                 style={styles.checkboxItem}
               >
-                <Text>{item}</Text>
+                <Text>{`${transformDateToString(item.date)} - Cupo: ${item.people}`}</Text>
                 <View
                   style={[
                     styles.checkbox,
                     {
-                      backgroundColor: selectedOptions == item
-                        ? 'green'
+                      backgroundColor: selectedOptions == item 
+                        ? '#4E598C'
                         : 'white',
                     },
                   ]}
@@ -48,6 +90,9 @@ const CheckboxDropdown = ({ options, selectedOptions, onSelect, visible, onClose
     </Modal>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -71,8 +116,9 @@ const styles = StyleSheet.create({
   checkbox: {
     width: 20,
     height: 20,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'green',
+    borderColor: '#4E598C',
   },
   closeButton: {
     marginTop: 10,

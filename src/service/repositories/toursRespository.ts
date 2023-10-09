@@ -1,37 +1,63 @@
-import { API_URL_TOURS } from "../Const";
+import { API_URL_TOURS, serializeQuerys } from "../Const";
 
-export const fetchDataFromApi = async (queryParams) => {
+export const fetchDataFromApi = async (url, queryParams) => {
   try {
-    var queryString = "";
-    if(queryParams === undefined) {
-      queryString = ""
-    } else {
-      queryString = Object.keys(queryParams)
-      .map((key) => {
-        const value = queryParams[key];
-        if (value !== undefined) {
-          return `${key}=${encodeURIComponent(value)}`;
-        }
-        return null; // Skip undefined values
-      })
-      .filter((param) => param !== null) // Remove null values
-      .join("&");
-      queryString = `?${queryString}`
-    }
-
-    
-    const response = await fetch(API_URL_TOURS + queryString, {
+    console.log(`fetchDataFromApi ${url + serializeQuerys(queryParams)}`);
+    const response = await fetch(url + serializeQuerys(queryParams), {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-type": "application/json",
       },
     });
+    let responseJson = await response.json();
     if (!response.ok) {
-      console.log(`Error response on fetchDataFromApi ${response}`);
-      throw new Error("Network response was not ok");
+      throw Error(`${responseJson.error}`);
     }
-    return await response.json();
+    return responseJson
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const postDataToApi = async (url, queryParams, body) => {
+  try {
+    console.log(`postDataToApi to ${url} with ${serializeQuerys(queryParams)} and body : ${JSON.stringify(body)}`);
+    const response = await fetch(url + serializeQuerys(queryParams), {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(body)
+    });
+    let responseJson = await response.json();
+    if (!response.ok) {
+      throw Error(`${responseJson.error}`);
+    }
+    return responseJson
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const deleteDataToApi = async (url, queryParams, body) => {
+  try {
+    const response = await fetch(url + serializeQuerys(queryParams), {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(body)
+    });
+    let responseJson = await response.json();
+    if (!response.ok) {
+      throw Error(`${responseJson.error}`);
+    }
+    return responseJson
   } catch (error) {
     throw error;
   }

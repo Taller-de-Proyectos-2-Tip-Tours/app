@@ -1,49 +1,60 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  Dimensions,
   Pressable,
   ScrollView,
-  Dimensions,
-  Image,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import StarRating from "react-native-star-rating-widget";
-import { PhotoCarousel } from "./PhotoCarousel";
-import DateHourPicker from "./CheckboxDropdown";
+import { transformDateToString } from "../useCases/utils";
+import IntegerSelector from "./AmountSelector";
 import CheckboxDropdown from "./CheckboxDropdown";
+import { PhotoCarousel } from "./PhotoCarousel";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
 export const TourDetail = (props) => {
-  const {
-    name,
-    duration,
-    description,
-    maxCapacity,
-    city,
-    language,
-    guideName,
-    numRatings,
-    averageRating,
-    availableDates,
-    mainPhoto,
-    extraPhotos,
-    mapPrototype,
-    meetingPointDescription,
-    comments,
-  } = props.data;
+  const { isReserve, handleBooking, reservedDate, handleCancelBooking } = props;
 
-  const [selectedOption, setSelectedOptions] = useState();
+  const [tourDetail, setTourDetail] = useState(props.tourDetail);
+  const [reserveDate, setReserveDates] = useState(reservedDate);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [participants, setParticipants] = useState(1);
+
+  const handleIncrement = () => {
+    setParticipants(participants + 1);
+  };
+
+  const handleDecrement = () => {
+    if (participants > 0) {
+      setParticipants(participants - 1);
+    }
+  };
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  const handleOptionSelect = (option) => {
-    setSelectedOptions(option);
+  const handleDateSelection = (option) => {
+    setReserveDates(option);
+    toggleDropdown();
+  };
+
+  const isButtonEnabled = () =>
+    reserveDate && participants > 0 && !isReserveButtonDisabled();
+
+  const isReserveButtonDisabled = () => {
+    if (!isReserve) return false;
+    const today = new Date();
+    const reserveDate = new Date(reservedDate);
+    const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
+    const reserveTimestap = reserveDate.getTime() - twentyFourHoursInMilliseconds;
+    return reserveTimestap <= today.getTime();
   };
 
   return (
@@ -52,67 +63,168 @@ export const TourDetail = (props) => {
         <PhotoCarousel
           key={1}
           style={styles.image}
-          photos={[mainPhoto, ...extraPhotos]}
+          photos={[tourDetail.mainPhoto, ...tourDetail.extraPhotos]}
         />
-        <Text key={2} style={styles.title}>
-          {name}
+
+        <View key={2} style={styles.row}>
+          <Icon name="map" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.city}</Text>
+          <Icon name="language" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.language}</Text>
+        </View>
+
+        <Text key={3} style={styles.title}>
+          {tourDetail.name}
         </Text>
-        <Text key={3} style={styles.label}>
-          {description}
+        <Text key={4} style={styles.label}>
+          {tourDetail.description}
         </Text>
-        <View key={4} style={styles.divider} />
+        {/* <View key={4} style={styles.divider} />
         <Text key={5} style={styles.title}>
-          Cupo maximo {maxCapacity} personas
+          Cupo maximo {tourDetail.maxCapacity} personas
         </Text>
-        <View key={6} style={styles.row}>
-          <Text style={styles.label}>{city}</Text>
-          <Text style={styles.label}>El guia habla en: {language}</Text>
+        <Text key={6} style={styles.label}>
+          Duración {tourDetail.duration} hs
+        </Text>
+        <View key={7} style={styles.row}>
+          <Text style={styles.label}>{tourDetail.city}</Text>
+          <Text style={styles.label}>
+            El guia habla en: {tourDetail.language}
+          </Text>
+        </View> */}
+        <View key={5} style={styles.row}>
+          <Icon name="map-marker" size={25} color="#4E598C" />
+          <Text style={styles.label2}>
+            {tourDetail.meetingPointDescription}
+          </Text>
+          <Icon name="clock-o" size={25} color="#4E598C" />
+          <Text style={styles.label2}>{tourDetail.duration}</Text>
         </View>
         <View key={8}>
-          <TouchableOpacity
-            onPress={toggleDropdown}
-            style={styles.toggleButton}
-          >
-            <Text>Ver fechas disponibles</Text>
-          </TouchableOpacity>
-          <CheckboxDropdown
-            options={availableDates.map(
-              (date) => `${date.date} - ${date.time}`
-            )}
-            selectedOptions={selectedOption}
-            onSelect={handleOptionSelect}
-            visible={dropdownVisible}
-            onClose={toggleDropdown}
-          />
-          <Text>Fecha y hora seleccionada {selectedOption}</Text>
+          {!isReserve ? (
+            <>
+              <TouchableOpacity
+                onPress={toggleDropdown}
+                style={styles.toggleButton}
+              >
+                <Text style={styles.buttonText}>Elegir fecha</Text>
+              </TouchableOpacity>
+              <CheckboxDropdown
+                options={tourDetail.availableDates}
+                selectedOptions={reserveDate}
+                onSelect={handleDateSelection}
+                visible={dropdownVisible}
+                onClose={toggleDropdown}
+              />
+              {reserveDate && (
+                <Text style={styles.label3}>
+                  Fecha y hora seleccionada {"\n"}{" "}
+                  {reserveDate ? transformDateToString(reserveDate.date) : ""}
+                </Text>
+              )}
+            </>
+          ) : (
+            <>
+              {/* aca hay que buscar la menera de mostrar la fecha de la reserva */}
+              <Text style={styles.label3}>
+                Fecha y hora seleccionada {"\n"}{" "}
+                {reserveDate ? transformDateToString(reservedDate) : ""}
+              </Text>
+            </>
+          )}
         </View>
-        <Pressable key={7} style={styles.mainAction} onPress={() => {}}>
-          <Text style={styles.mainActionText}>{"Reservar"}</Text>
+        <View key={23}>
+          {!isReserve ? (
+            <>
+              <Text>Cantidad de personas</Text>
+              <IntegerSelector
+                value={participants}
+                onIncrement={handleIncrement}
+                onDecrement={handleDecrement}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+        </View>
+        <Pressable
+          key={9}
+          style={[
+            styles.toggleButton,
+            {
+              backgroundColor: isButtonEnabled() ? "#4E598C" : "#A9A9A9",
+            },
+          ]}
+          onPress={() => {
+            if (reserveDate) {
+              // Verifica si reserveDate tiene un valor
+              if (isReserve) {
+                if(!isReserveButtonDisabled())
+                  handleCancelBooking(reserveDate.date);
+              } else {
+                handleBooking(reserveDate.date, participants);
+              }
+            }
+          }}
+        >
+          <Text style={styles.buttonText}>
+            {isReserve ? "Cancelar reserva" : "Reservar"}
+          </Text>
         </Pressable>
+        <>
+        {isReserveButtonDisabled() && (
+          <Text
+            style={[
+              styles.label3,
+              {
+                color: "red",
+              },
+            ]}
+          >
+            Solo se puede cancelar una reserva 24hs antes de su inicio
+          </Text>
+        )}</>
 
-        <View key={9} style={styles.ratingContainer}>
-          <Text style={styles.label}>{numRatings} puntuaciones</Text>
+        <View key={10} style={styles.ratingContainer}>
+          <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
           <StarRating
-            rating={averageRating}
+            rating={tourDetail.averageRating}
             onChange={() => {}}
-            color="#4E598C"
+            color="#FFD700"
             starSize={35}
           />
         </View>
-        <View key={10} style={styles.map}> 
-          <Image source={require("../../assets/map_preview.jpg")} />
+        <View key={11}>
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: tourDetail.stops[0].lat,
+              longitude: tourDetail.stops[0].lon,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            {tourDetail.stops.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: marker.lat, longitude: marker.lon }}
+                title={marker.tag}
+                // description={marker.description}
+              />
+            ))}
+          </MapView>
         </View>
-        <Text key={11} style={styles.title}>
+        {/* <Text key={12} style={styles.title}>
           Punto de encuentro
         </Text>
-        <Text key={12} style={styles.label}>
-          {meetingPointDescription}
-        </Text>
-        <Text key={13} style={styles.title}>
+        <Text key={13} style={styles.label}>
+          {tourDetail.meetingPointDescription}
+        </Text> */}
+        <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        {comments.map((item, index) => (
-          <Text key={14 + index} style={styles.comment}>
+        {tourDetail.comments.map((item, index) => (
+          <Text key={15 + index} numberOfLines={2} style={styles.comment}>
             {item.user}: {item.comment}
           </Text>
         ))}
@@ -139,11 +251,11 @@ const styles = StyleSheet.create({
   },
   mainAction: {
     padding: 10,
-    paddingVertical: 16,
+    paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 24,
-    backgroundColor: "#4E598C",
+    backgroundColor: "#007BFF",
     borderRadius: 40,
   },
   mainActionText: {
@@ -153,19 +265,38 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
+    alignItems: "center",
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
     marginTop: 12,
+    color: "#004E98",
   },
   label: {
-    fontSize: 14,
+    fontSize: 18,
     marginTop: 10,
+    color: "#333333",
+  },
+  label2: {
+    fontSize: 18,
+    color: "#333333",
+    textAlign: "right",
+  },
+  label3: {
+    fontSize: 14,
+    color: "#333333",
+    textAlign: "center",
+  },
+  buttonText: {
+    fontSize: 18,
+    color: "#fff",
   },
   comment: {
     fontSize: 14,
     marginTop: 6,
+    marginBottom: 4,
   },
   divider: {
     marginTop: 10,
@@ -176,20 +307,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     padding: 16,
-    backgroundColor: `rgba(252, 175, 88, 0.6)`,
+    backgroundColor: `transparent`,
     borderRadius: 10,
-    marginTop: 24,
   },
   toggleButton: {
-    backgroundColor: "#F9C784",
+    backgroundColor: "#4E598C",
     marginVertical: 10,
     padding: 10,
     borderRadius: 40,
     marginBottom: 20,
     alignItems: "center",
+    justifyContent: "center",
   },
   map: {
-    height: 200,
+    height: 250,
     width: "100%",
     marginTop: 10,
     borderRadius: 15,

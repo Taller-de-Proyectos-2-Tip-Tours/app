@@ -4,8 +4,13 @@ import { TourList } from "../TourList";
 import SearchBox from "../SearchBox";
 import { getToursUseCase } from "../../useCases/getToursUseCase";
 import FilterModal from "../FilterModal";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function TourListScreen() {
+  const navigation = useNavigation();
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,10 +24,10 @@ export default function TourListScreen() {
   };
 
   const applyNameFilters = (name) => {
-    if(name == "") {
+    if (name == "") {
       setNameFilter(undefined);
     } else {
-      setNameFilter({name: name});
+      setNameFilter({ name: name });
     }
   };
 
@@ -30,12 +35,13 @@ export default function TourListScreen() {
     setIsFilterModalOpen(false);
   };
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     setLoading(true);
-    let filters = {...selectedCities, ...nameFilter}
+    let filters = { ...selectedCities, ...nameFilter };
     getToursUseCase(filters)
       .then((data) => {
         setData(data);
+        setError(null);
         setLoading(false);
       })
       .catch((err) => {
@@ -43,10 +49,11 @@ export default function TourListScreen() {
         setError("Hubo un error cargando los datos :(");
         setLoading(false);
       });
-  }, [selectedCities, nameFilter]);
+  }, [selectedCities, nameFilter]));
 
   return (
     <View style={styles.container}>
+      <StatusBar style="auto" />
       <View style={styles.row}>
         <SearchBox onSearch={applyNameFilters} />
         <TouchableOpacity
@@ -65,7 +72,11 @@ export default function TourListScreen() {
         />
       </View>
       {loading ? (
-        <Text>Cargando</Text>
+        <Spinner
+          visible={loading}
+          textContent={"Cargando..."}
+          textStyle={{ color: "white" }}
+        />
       ) : error ? (
         <Text>Error: {error}</Text>
       ) : data.length == 0 ? (
@@ -80,7 +91,7 @@ export default function TourListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     alignItems: "center",
   },
   row: {

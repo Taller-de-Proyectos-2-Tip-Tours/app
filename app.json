@@ -24,10 +24,25 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.codecrafter.tip.tours",
+      "googleServicesFile": "./google-services.json",
+      "config":{
+        "googleMaps":{
+          "apiKey":"AIzaSyDN5vBJXbmtaljJjm6CCWkM9cVq3P23QXE"
+        }
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "@react-native-google-signin/google-signin"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b76a4926-ece7-4a88-b68e-66a1b032e82c"
+      }
     }
   }
 }

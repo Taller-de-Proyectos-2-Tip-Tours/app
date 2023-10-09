@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, fireEvent } from 'test-utils';
 import {describe, expect, it} from '@jest/globals';
-import HomeScreen from './HomeScreen';
+import LoginScreen from './LoginScreen';
 
 describe('HomeScreen', () => {
   it('renders correctly', () => {
-    const { getByText } = render(<HomeScreen />);
+    const { getByText } = render(<LoginScreen />);
     
     // Check if "Tip Tour" text is rendered
     const tipTourText = getByText('Tip Tour');
@@ -17,7 +17,7 @@ describe('HomeScreen', () => {
   });
 
   it('navigates to "TourList" when the button is pressed', () => {
-    const { getByText } = render(<HomeScreen />);
+    const { getByText } = render(<LoginScreen />);
     const verPaseosButton = getByText('Ver paseos');
 
     // Mock the navigation object with a navigate function
