@@ -185,12 +185,12 @@ export const TourDetail = (props) => {
             ))}
           </MapView>
         </View>
-        <Text key={12} style={styles.title}>
+        {/* <Text key={12} style={styles.title}>
           Punto de encuentro
         </Text>
         <Text key={13} style={styles.label}>
           {tourDetail.meetingPointDescription}
-        </Text>
+        </Text> */}
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
