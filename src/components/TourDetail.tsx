@@ -142,10 +142,12 @@ export const TourDetail = (props) => {
             },
           ]}
           onPress={() => {
-            if (isReserve) {
-              handleCancelBooking(selectedOption.date);
-            } else {
-              handleBooking(selectedOption.date, participants);
+            if (selectedOption) { // Verifica si selectedOption tiene un valor
+              if (isReserve) {
+                handleCancelBooking(selectedOption.date);
+              } else {
+                handleBooking(selectedOption.date, participants);
+              }
             }
           }}
         >
