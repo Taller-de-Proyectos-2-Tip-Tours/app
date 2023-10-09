@@ -1,21 +1,21 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { fetchDataFromApi } from "../service/repositories/reserveRepository";
-import { formatDate } from "./utils";
 
 export const getReserves = async () => {
   try {
     const currentUser = await GoogleSignin.getCurrentUser();
-    const data = await fetchDataFromApi({
+    let request = {
       travelerEmail: currentUser.user.email,
-    });
-    console.log(data)
-  
+    };
+    console.log(`Executing getReserves with query: ${JSON.stringify(request)}`);
+    const data = await fetchDataFromApi(request);
+
     return data.map((item) => ({
-      "id": item._id.$oid,
-      "tourId": item.tourId,
-      "date":  item.date,
-      "people": item.people,
-      "name": item.tourName,
+      id: item._id.$oid,
+      tourId: item.tourId,
+      date: item.date,
+      people: item.people,
+      name: item.tourName,
     }));
   } catch (error) {
     console.log(`Error on getMyReserves ${error}`);

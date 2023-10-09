@@ -4,7 +4,9 @@ import { TourDetail } from "../TourDetail";
 import Toast from "react-native-toast-message";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { cancelBookingUseCase, getToursUseCase, postBookingUseCase } from "../../useCases/getToursUseCase";
+import { getToursUseCase } from "../../useCases/getToursUseCase";
+import { cancelBookingUseCase } from "../../useCases/cancelBookingUseCase";
+import { postBookingUseCase } from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
 import { getReserves } from "../../useCases/getReservesUseCase";
 
@@ -19,20 +21,20 @@ export default function TourScreen({ route }) {
   const [loading, setLoading] = useState(false);
   const [tourDetail, setTourDetail] = useState(tour);
 
-  const showBookingSuccess = () => {
+  const showBookingSuccess = (message) => {
     Toast.show({
       type: "success", // 'success', 'error', 'info', 'warning'
       position: "bottom", // 'top', 'bottom', 'center'
-      text1: `Se realizo la reserva correctamente`,
+      text1: message,
       visibilityTime: 3000, // Duration in milliseconds
     });
   };
 
-  const showBookingError = () => {
+  const showBookingError = (message) => {
     Toast.show({
-      type: "success", // 'success', 'error', 'info', 'warning'
+      type: "error", // 'success', 'error', 'info', 'warning'
       position: "bottom", // 'top', 'bottom', 'center'
-      text1: `No se pudo realizar la reserva`,
+      text1: message,
       visibilityTime: 3000, // Duration in milliseconds
     });
   };
@@ -40,7 +42,7 @@ export default function TourScreen({ route }) {
   const handleBooking = async (selectedOption, participants) => {
     let currentUser = await GoogleSignin.getCurrentUser();
     let body = {
-      tourId: tour.id,
+      tourId: tourDetail.id,
       date: selectedOption,
       traveler: {
         name: currentUser.user.givenName,
@@ -48,29 +50,30 @@ export default function TourScreen({ route }) {
       },
       people: participants,
     };
-    let result = await postBookingUseCase(body);
-    //console.log(result); 
-    //if (result.success === "La reserva fue creada con éxito.") {
-      showBookingSuccess();
+    await postBookingUseCase(body)
+      .then((data) => {
+        showBookingSuccess(`Se realizo la reserva correctamente`);
 
-      setTimeout(() => {
-        navigation.navigate("bookingTab");
-      }, 2000);
-    //} else {
-    //  showBookingError();
-    //}
+        setTimeout(() => {
+          navigation.navigate("bookingTab");
+        }, 2000);
+      })
+      .catch((err) => {
+        showBookingError(err.message);
+      });
   };
 
-   const handleCancelBooking = async () => {
-    cancelBookingUseCase(reserveId);
-    Toast.show({
-      type: "success", // 'success', 'error', 'info', 'warning'
-      position: "bottom", // 'top', 'bottom', 'center'
-      text1: `Se cancelo la reserva correctamente`,
-      visibilityTime: 3000, // Duration in milliseconds
-    });
-    navigation.goBack();
-    navigation.navigate("TourList");
+  const handleCancelBooking = async () => {
+    cancelBookingUseCase(reserveId)
+      .then((data) => {
+        showBookingSuccess(`Se cancelo la reserva correctamente`);
+
+        navigation.goBack();
+        navigation.navigate("TourList");
+      })
+      .catch((err) => {
+        showBookingError(err.message);
+      });
   };
 
   useFocusEffect(
@@ -78,14 +81,14 @@ export default function TourScreen({ route }) {
       if (!isReserve) {
         return;
       }
-      
-      console.log("getting tour detail for reserve with tourId" , tourId);
+
+      console.log("getting tour detail for reserve with tourId", tourId);
       setLoading(true);
-      getToursUseCase({id: tourId})
+      getToursUseCase({ id: tourId })
         .then((data) => {
           setTourDetail(data[0]);
           setLoading(false);
-          console.log("getting tour detail successfully" , tourId);
+          console.log("getting tour detail successfully", tourId);
         })
         .catch((err) => {
           console.log(err);
@@ -96,7 +99,7 @@ export default function TourScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      {loading || tourDetail == undefined? (
+      {loading || tourDetail == undefined ? (
         <Spinner
           visible={loading}
           textContent={"Cargando..."}

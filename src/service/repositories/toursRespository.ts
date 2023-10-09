@@ -2,6 +2,7 @@ import { API_URL_TOURS, serializeQuerys } from "../Const";
 
 export const fetchDataFromApi = async (queryParams) => {
   try {
+    console.log(`fetchDataFromApi ${serializeQuerys(queryParams)}`);
     const response = await fetch(API_URL_TOURS + serializeQuerys(queryParams), {
       method: "GET",
       headers: {
@@ -9,11 +10,11 @@ export const fetchDataFromApi = async (queryParams) => {
         "Content-type": "application/json",
       },
     });
+    let responseJson = await response.json();
     if (!response.ok) {
-      console.log(`Error response on fetchDataFromApi ${response}`);
-      throw new Error("Network response was not ok");
+      throw Error(`${responseJson.error}`);
     }
-    return await response.json();
+    return responseJson
   } catch (error) {
     throw error;
   }
@@ -22,6 +23,7 @@ export const fetchDataFromApi = async (queryParams) => {
 
 export const postDataToApi = async (url, queryParams, body) => {
   try {
+    console.log(`postDataToApi to ${url} with ${serializeQuerys(queryParams)} and body : ${JSON.stringify(body)}`);
     const response = await fetch(url + serializeQuerys(queryParams), {
       method: "POST",
       headers: {
@@ -30,11 +32,11 @@ export const postDataToApi = async (url, queryParams, body) => {
       },
       body: JSON.stringify(body)
     });
+    let responseJson = await response.json();
     if (!response.ok) {
-      console.log(`Error response on postDataToApi ${JSON.stringify(response)}`);
-      throw new Error("Network response was not ok");
+      throw Error(`${responseJson.error}`);
     }
-    return await response.json();
+    return responseJson
   } catch (error) {
     throw error;
   }
@@ -51,11 +53,11 @@ export const deleteDataToApi = async (url, queryParams, body) => {
       },
       body: JSON.stringify(body)
     });
+    let responseJson = await response.json();
     if (!response.ok) {
-      console.log(`Error response on deleteDataToApi ${JSON.stringify(response)}`);
-      throw new Error("Network response was not ok");
+      throw Error(`${responseJson.error}`);
     }
-    return await response.json();
+    return responseJson
   } catch (error) {
     throw error;
   }
