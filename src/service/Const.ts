@@ -5,6 +5,7 @@ export const API_URL = 'https://tdp2-backend.onrender.com';
 export const API_URL_TOURS = `${API_URL}/tours`;
 export const API_URL_CITIES = `${API_URL}/cities`;
 export const API_URL_RESERVES = `${API_URL}/reserves`;
+export const API_URL_REVIEWS = `${API_URL}/reviews`;
 
 export const serializeQuerys = (queryParams) => {
     var queryString = "";

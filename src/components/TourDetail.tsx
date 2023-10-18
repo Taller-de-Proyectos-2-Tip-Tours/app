@@ -181,7 +181,7 @@ export const TourDetail = (props) => {
               },
             ]}
           >
-            Solo se puede cancelar una reserva 24hs antes de su inicio
+            Sólo se puede cancelar una reserva 24hs antes de su inicio
           </Text>
         )}</>
 
