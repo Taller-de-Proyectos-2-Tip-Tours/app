@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:314938900863:android:74cd997b6b303cbaae1a4a",
+        "mobilesdk_app_id": "1:314938900863:android:ce83be8665a5ad55ae1a4a",
         "android_client_info": {
-          "package_name": "com.codecrafter.tip.tours"
+          "package_name": "com.codecrafter.TipTour"
         }
       },
       "oauth_client": [
@@ -20,7 +20,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDN5vBJXbmtaljJjm6CCWkM9cVq3P23QXE"
+          "current_key": "AIzaSyDQnAOJ7ApWXiIfaU2E3N1JGLWloXM2Pqo"
         }
       ],
       "services": {

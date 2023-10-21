@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.codecrafter.tip.tours",
+      "package": "com.codecrafter.TipTour",
       "googleServicesFile": "./google-services.json",
       "config":{
         "googleMaps":{
@@ -37,7 +37,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app"
     ],
     "extra": {
       "eas": {

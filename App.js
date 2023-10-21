@@ -1,4 +1,6 @@
 import React from "react";
+import { useState, useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./src/components/screens/LoginScreen";
@@ -7,10 +9,14 @@ import TourScreen from "./src/components/screens/TourScreen";
 import ProfileScreen from "./src/components/screens/ProfileScreen";
 import { LogBox, StyleSheet, StatusBar } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import Toast, { BaseToast } from "react-native-toast-message";
 import ReservesScreen from "./src/components/screens/ReservesScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
 
 const ignoreWarns = [
   "EventEmitter.removeListener",
@@ -39,6 +45,40 @@ LogBox.ignoreLogs(ignoreWarns);
 GoogleSignin.configure();
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
+
+    console.log(`Token data ${token.data}`);
+    console.log(`Token type ${token.type}`);
+    console.log(`Token projectId ${ Constants.expoConfig.extra.eas.projectId}`);
+  
+
+  return token;
+}
 
 function StackNavigator() {
   return (
@@ -114,7 +154,7 @@ function TabNavigator() {
 
 const toastConfig = {
   success: (props) => (
-    <BaseToast style={{ width: "90%", ...props.style}} {...props} />
+    <BaseToast style={{ width: "90%", borderLeftColor: 'green', ...props.style}} {...props} />
   ),
   error: (props) => (
     <BaseToast style={{ width: "90%",  borderLeftColor: 'red', ...props.style }}
@@ -124,6 +164,27 @@ const toastConfig = {
 };
 
 export default function App() {
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
   return (
     <>
       <StatusBar
