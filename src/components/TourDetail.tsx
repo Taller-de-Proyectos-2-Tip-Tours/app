@@ -21,7 +21,14 @@ import CommentsModal from "./CommentsModal";
 const { width } = Dimensions.get("window");
 
 export const TourDetail = (props) => {
-  const { isReserve, handleBooking, reservedDate, handleCancelBooking, handleReviewPosting } = props;
+  const {
+    isReserve,
+    handleBooking,
+    reservedDate,
+    reserveState,
+    handleCancelBooking,
+    handleReviewPosting,
+  } = props;
 
   const [tourDetail, setTourDetail] = useState(props.tourDetail);
   const [reserveDate, setReserveDates] = useState(reservedDate);
@@ -56,7 +63,8 @@ export const TourDetail = (props) => {
     const today = new Date();
     const reserveDate = new Date(reservedDate);
     const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
-    const reserveTimestap = reserveDate.getTime() - twentyFourHoursInMilliseconds;
+    const reserveTimestap =
+      reserveDate.getTime() - twentyFourHoursInMilliseconds;
     return reserveTimestap <= today.getTime();
   };
 
@@ -162,7 +170,7 @@ export const TourDetail = (props) => {
             if (reserveDate) {
               // Verifica si reserveDate tiene un valor
               if (isReserve) {
-                if(!isReserveButtonDisabled())
+                if (!isReserveButtonDisabled())
                   handleCancelBooking(reserveDate.date);
               } else {
                 handleBooking(reserveDate.date, participants);
@@ -171,39 +179,45 @@ export const TourDetail = (props) => {
           }}
         >
           <Text style={styles.buttonText}>
-            {isReserve ? "Cancelar reserva" : "Reservar"}
+            {isReserve && reserveState == "abierto"
+              ? "Cancelar reserva"
+              : "Reservar"}
           </Text>
         </Pressable>
         <>
-        {isReserveButtonDisabled() && (
-          <Text
-            style={[
-              styles.label3,
-              {
-                color: "red",
-              },
-            ]}
-          >
-            Solo se puede cancelar una reserva 24hs antes de su inicio
-          </Text>
-        )}</>
-         <Pressable
-          key={26}
-          style={styles.toggleButton}
-          onPress={() => {
-            setIsCommentModalOpen(true);
-          }}
-    
-        >
-       
-          <Text style={styles.buttonText}>Dejá tu comentario</Text>
-        </Pressable>
+          {isReserveButtonDisabled() && reserveState == "abierto" && (
+            <Text
+              style={[
+                styles.label3,
+                {
+                  color: "red",
+                },
+              ]}
+            >
+              Solo se puede cancelar una reserva 24hs antes de su inicio
+            </Text>
+          )}
+        </>
+        {reserveState == "finalizado" && (
+          <>
+            <Pressable
+              key={26}
+              style={styles.toggleButton}
+              onPress={() => {
+                setIsCommentModalOpen(true);
+              }}
+            >
+              <Text style={styles.buttonText}>Dejá tu comentario</Text>
+            </Pressable>
 
-        <CommentsModal
-          isVisible={isCommentModalOpen}
-          onDismiss={() => setIsCommentModalOpen(false)}
-          onSelect={handleReviewPosting}
-        />
+            <CommentsModal
+              isVisible={isCommentModalOpen}
+              onDismiss={() => setIsCommentModalOpen(false)}
+              onSelect={handleReviewPosting}
+            />
+          </>
+        )}
+
         <View key={10} style={styles.ratingContainer}>
           <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
           <StarRating
@@ -243,15 +257,15 @@ export const TourDetail = (props) => {
           Comentarios
         </Text>
         <FlatList
-        data={tourDetail.comments}
-        style={{marginVertical: 10}}
-        renderItem={({item}) => <Text 
-         style={styles.comment}>
-          {item.user}: {item.comment}
-        </Text>}
-        keyExtractor={item => item.id}
-      />
-       
+          data={tourDetail.comments}
+          style={{ marginVertical: 10 }}
+          renderItem={({ item }) => (
+            <Text style={styles.comment}>
+              {item.user}: {item.comment}
+            </Text>
+          )}
+          keyExtractor={(item) => item.id}
+        />
       </ScrollView>
     </View>
   );

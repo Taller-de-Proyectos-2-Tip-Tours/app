@@ -23,11 +23,11 @@ export const ReserveList = ({ style, tours }) => {
 
 const ReserveListRow = (props) => {
   const navigation = useNavigation();
-  const { id, tourId, date, people, name } = props.data;
+  const { id, tourId, date, people, name, state } = props.data;
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id })}
+      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id, reserveState: state})}
     >
       <View style={styles.container}>
         <View style={styles.row}>
