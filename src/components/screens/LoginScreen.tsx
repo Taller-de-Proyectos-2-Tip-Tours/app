@@ -9,6 +9,8 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import Toast from "react-native-toast-message";
+import messaging from '@react-native-firebase/messaging';
+
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -23,6 +25,12 @@ export default function LoginScreen() {
       text1: `Bienvenido ${userName}`,
       visibilityTime: 3000, // Duration in milliseconds
     });
+
+    messaging()
+      .getToken()
+      .then(token => {
+        console.log("Token", token);
+      });
   };
 
   const showLoginError = () => {
@@ -46,6 +54,7 @@ export default function LoginScreen() {
         showLoginSuccess(userInfo.user.name);
         navigation.replace("Home");
       }
+      
     } catch (error) {
       showLoginError();
       console.error("Google Sign-In Error", error);

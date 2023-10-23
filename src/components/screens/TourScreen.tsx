@@ -6,13 +6,17 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { getTourUseCase } from "../../useCases/getToursUseCase";
 import { cancelBookingUseCase } from "../../useCases/cancelBookingUseCase";
-import { postBookingUseCase } from "../../useCases/postBookingUseCase";
+import {
+  postBookingUseCase,
+  postReviewUseCase,
+} from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
 
 export default function TourScreen({ route }) {
   let tour = route.params.tour;
   let tourId = route.params.tourId;
   let reserveId = route.params.reserveId;
+  let reserveState = route.params.reserveState;
   let reservedDate = route.params.reservedDate;
   let isReserve = tourId != undefined;
   let navigation = useNavigation();
@@ -75,6 +79,31 @@ export default function TourScreen({ route }) {
       });
   };
 
+  const handleReviewPosting = async (review) => {
+    let currentUser = await GoogleSignin.getCurrentUser();
+    let body = {
+      stars: review.rating,
+      comment: review.comment,
+      userEmail: currentUser.user.email,
+      userName: currentUser.user.name,
+    };
+    postReviewUseCase(tourId, body)
+      .then((data) => {
+        let reviews = tourDetail.comments;
+        reviews.push({
+          user: currentUser.user.name,
+          comment: review.comment,
+        });
+        console.log("reviews", reviews);
+        let newDetail = {comments : reviews , ...tourDetail}
+        setTourDetail(newDetail);
+        showBookingSuccess(`Se mando el commentario correctamente`);
+      })
+      .catch((err) => {
+        showBookingError(err.message);
+      });
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       if (!isReserve) {
@@ -107,10 +136,12 @@ export default function TourScreen({ route }) {
       ) : (
         <TourDetail
           tourDetail={tourDetail}
+          reserveState={reserveState}
           isReserve={isReserve}
           reservedDate={reservedDate}
           handleBooking={handleBooking}
           handleCancelBooking={handleCancelBooking}
+          handleReviewPosting={handleReviewPosting}
         />
       )}
     </View>

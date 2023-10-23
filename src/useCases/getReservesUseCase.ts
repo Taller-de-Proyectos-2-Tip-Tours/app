@@ -16,6 +16,7 @@ export const getReserves = async () => {
       date: item.date,
       people: item.people,
       name: item.tourName,
+      state: item.state
     }));
   } catch (error) {
     console.log(`Error on getMyReserves ${error}`);
