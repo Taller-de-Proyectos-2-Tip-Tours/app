@@ -1,15 +1,12 @@
 // HomeScreen.js
-import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Text, ImageBackground } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
   GoogleSigninButton,
-  statusCodes,
 } from "@react-native-google-signin/google-signin";
 import Toast from "react-native-toast-message";
-import messaging from '@react-native-firebase/messaging';
 
 
 export default function LoginScreen() {
@@ -25,12 +22,6 @@ export default function LoginScreen() {
       text1: `Bienvenido ${userName}`,
       visibilityTime: 3000, // Duration in milliseconds
     });
-
-    messaging()
-      .getToken()
-      .then(token => {
-        console.log("Token", token);
-      });
   };
 
   const showLoginError = () => {

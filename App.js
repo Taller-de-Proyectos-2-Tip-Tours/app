@@ -1,6 +1,5 @@
 import React from "react";
-import { useState, useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import { useEffect } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./src/components/screens/LoginScreen";
@@ -13,9 +12,9 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import ReservesScreen from "./src/components/screens/ReservesScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+import { useNavigation } from '@react-navigation/native';
+import {createNavigationContainerRef} from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
 
 
 const ignoreWarns = [
@@ -43,43 +42,6 @@ console.warn = (...arg) => {
 LogBox.ignoreLogs(ignoreWarns);
 
 GoogleSignin.configure();
-const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
-
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants.expoConfig.extra.eas.projectId,
-    });
-
-    console.log(`Token data ${token.data}`);
-    console.log(`Token type ${token.type}`);
-    console.log(`Token projectId ${ Constants.expoConfig.extra.eas.projectId}`);
-  
-
-  return token;
-}
-
 function StackNavigator() {
   return (
     <Stack.Navigator>
@@ -163,26 +125,53 @@ const toastConfig = {
   ),
 };
 
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  if (enabled) {
+    console.log('Authorization status:', authStatus);
+  }
+}
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  const navigationRef = createNavigationContainerRef();
+
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
+    
+    // usado cuando la app esta abierta
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+    requestUserPermission();
+    messaging().getToken().then((token) => {
+      console.log("Token", token);
+    });
+  
+    // Usado ara abrir la app
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      const { tourId, date, id, state } = remoteMessage.data;
+      navigationRef.navigate('Home', {
+        screen: 'bookingTab',
+        params: {
+          screen: "ReserveDetail", 
+          params: { tourId: tourId, reservedDate: date, reserveId: id, reserveState: state}
+        }
+      });
+    });
+  
+    
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', remoteMessage);
     });
 
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
+    return unsubscribe;
   }, []);
 
   return (
@@ -192,7 +181,8 @@ export default function App() {
         backgroundColor="#4E598C"
         barStyle="light-content"
       />
-      <NavigationContainer>
+      <NavigationContainer 
+      ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
