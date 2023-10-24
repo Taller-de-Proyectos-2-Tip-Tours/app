@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./src/components/screens/LoginScreen";
@@ -12,10 +12,11 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import ReservesScreen from "./src/components/screens/ReservesScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from '@react-navigation/native';
-import {createNavigationContainerRef} from '@react-navigation/native';
-import messaging from '@react-native-firebase/messaging';
-
+import { useNavigation } from "@react-navigation/native";
+import { createNavigationContainerRef } from "@react-navigation/native";
+import messaging from "@react-native-firebase/messaging";
+import NotificationHistoryScreen from "./src/components/screens/NotificationHistoryScreen";
+import { storeNotificationHistoryUseCase } from "./src/useCases/notification/storeNotificationHistoryUseCase";
 
 const ignoreWarns = [
   "EventEmitter.removeListener",
@@ -66,11 +67,13 @@ function StackReserveNavigator() {
         name="ReserveList"
         options={{ title: "Mis reservas" }}
         component={ReservesScreen}
+        getId={({ params }) => params.id}
       />
       <Stack.Screen
         name="ReserveDetail"
         options={{ title: "Detalle de la reserva" }}
         component={TourScreen}
+        getId={({ params }) => params.id}
       />
     </Stack.Navigator>
   );
@@ -89,6 +92,8 @@ function TabNavigator() {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "bookingTab") {
             iconName = focused ? "book" : "book-outline";
+          } else if (route.name === "notificationHistoryTab") {
+            iconName = focused ? "notifications" : "notifications-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -106,6 +111,11 @@ function TabNavigator() {
         options={{ title: "Mis reservas", headerShown: false }}
       />
       <Tab.Screen
+        name="notificationHistoryTab"
+        component={NotificationHistoryScreen}
+        options={{ title: "Notificaciones" }}
+      />
+      <Tab.Screen
         name="profileTab"
         component={ProfileScreen}
         options={{ title: "Mi perfil" }}
@@ -116,12 +126,17 @@ function TabNavigator() {
 
 const toastConfig = {
   success: (props) => (
-    <BaseToast style={{ width: "90%", borderLeftColor: 'green', ...props.style}} {...props} />
+    <BaseToast
+      style={{ width: "90%", borderLeftColor: "green", ...props.style }}
+      {...props}
+    />
   ),
   error: (props) => (
-    <BaseToast style={{ width: "90%",  borderLeftColor: 'red', ...props.style }}
-    text1NumberOfLines={2}
-     {...props} />
+    <BaseToast
+      style={{ width: "90%", borderLeftColor: "red", ...props.style }}
+      text1NumberOfLines={2}
+      {...props}
+    />
   ),
 };
 
@@ -132,7 +147,7 @@ async function requestUserPermission() {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status:', authStatus);
+    console.log("Authorization status:", authStatus);
   }
 }
 
@@ -143,32 +158,43 @@ export default function App() {
   const navigationRef = createNavigationContainerRef();
 
   useEffect(() => {
-    
-    // usado cuando la app esta abierta
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
-
     requestUserPermission();
-    messaging().getToken().then((token) => {
-      console.log("Token", token);
-    });
-  
+    messaging()
+      .getToken()
+      .then((token) => {
+        console.log("Token", token);
+      });
+
     // Usado ara abrir la app
-    messaging().onNotificationOpenedApp(remoteMessage => {
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "Message handled and opened the app",
+        JSON.stringify(remoteMessage)
+      );
       const { tourId, date, id, state } = remoteMessage.data;
-      navigationRef.navigate('Home', {
-        screen: 'bookingTab',
+      navigationRef.navigate("Home", {
+        screen: "bookingTab",
         params: {
-          screen: "ReserveDetail", 
-          params: { tourId: tourId, reservedDate: date, reserveId: id, reserveState: state}
-        }
+          screen: "ReserveDetail",
+          params: {
+            tourId: tourId,
+            reservedDate: date,
+            reserveId: id,
+            reserveState: state,
+          },
+        },
       });
     });
-  
-    
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
+
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      storeNotificationHistoryUseCase(remoteMessage);
+      console.log("Message handled in the background!", remoteMessage);
+    });
+
+    // usado cuando la app esta abierta
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      storeNotificationHistoryUseCase(remoteMessage);
+      console.log("A new FCM message arrived!", JSON.stringify(remoteMessage));
     });
 
     return unsubscribe;
@@ -181,8 +207,7 @@ export default function App() {
         backgroundColor="#4E598C"
         barStyle="light-content"
       />
-      <NavigationContainer 
-      ref={navigationRef}>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"

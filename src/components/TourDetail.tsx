@@ -198,7 +198,7 @@ export const TourDetail = (props) => {
             </Text>
           )}
         </>
-        {reserveState == "finalizado" && (
+        {
           <>
             <Pressable
               key={26}
@@ -216,7 +216,7 @@ export const TourDetail = (props) => {
               onSelect={handleReviewPosting}
             />
           </>
-        )}
+        }
 
         <View key={10} style={styles.ratingContainer}>
           <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
@@ -256,16 +256,13 @@ export const TourDetail = (props) => {
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        <FlatList
-          data={tourDetail.comments}
-          style={{ marginVertical: 10 }}
-          renderItem={({ item }) => (
-            <Text style={styles.comment}>
-              {item.user}: {item.comment}
+        <View style={{ marginVertical: 10 }}>
+          {tourDetail.comments.map((comment, index) => (
+            <Text key={30 + index} style={styles.comment}>
+              {comment.user}: {comment.comment}
             </Text>
-          )}
-          keyExtractor={(item) => item.id}
-        />
+          ))}
+        </View>
       </ScrollView>
     </View>
   );
