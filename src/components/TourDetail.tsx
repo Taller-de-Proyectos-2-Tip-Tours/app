@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  FlatList
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import StarRating from "react-native-star-rating-widget";
@@ -223,11 +224,18 @@ export const TourDetail = (props) => {
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        {tourDetail.comments.map((item, index) => (
+        {/* {tourDetail.comments.map((item, index) => (
           <Text key={15 + index} numberOfLines={2} style={styles.comment}>
-            {item.user}: {item.comment}
+            {item.userName}: {item.comment}
           </Text>
-        ))}
+        ))} */}
+        <FlatList
+        data={tourDetail.comments}
+        style={{marginVertical: 10}}
+        renderItem={({item}) => <Text style={styles.comment}> {item.userName}: {item.comment}
+        </Text>}
+        keyExtractor={item => item.id}
+        />
       </ScrollView>
     </View>
   );
@@ -295,8 +303,7 @@ const styles = StyleSheet.create({
   },
   comment: {
     fontSize: 14,
-    marginTop: 6,
-    marginBottom: 4,
+    marginVertical: 6,
   },
   divider: {
     marginTop: 10,
