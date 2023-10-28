@@ -18,6 +18,7 @@ const ReserveListContainer = ({ name, date, people, state }) => {
         padding: 4,
         borderRadius: 5, // Agrega bordes redondeados al cartel
         paddingHorizontal: 8, // Espacio entre el texto y el borde
+        alignSelf: 'flex-end', 
       };
 
 
@@ -33,14 +34,17 @@ const ReserveListContainer = ({ name, date, people, state }) => {
         <View style={styles.row}>
           <Icon name="calendar" size={25} color="#4E598C" />
           <Text style={styles.label}>{date}</Text>
+        </View>
+        <View style={styles.row}>
           <Icon name="user" size={25} color="#4E598C" />
           <Text style={styles.label}>{people}</Text>
         </View>
 
-        {/* <View style={styles.infoContainer}> //se saco estado del get, a revisar
-            <Text style={[styles.label, { color: borderColor }]}>Estado:</Text>
-            <Text style={[styles.value, stateStyle]}>{state}</Text>
-          </View> */}
+        {state && (
+           <View style={[styles.infoContainer, { marginLeft: 'auto' }]}>
+           <Text style={[styles.value, stateStyle]}>{state.toUpperCase()}</Text>
+           </View>
+        )}
       </View>
     </View>
     <View style={styles.divider} />
@@ -57,8 +61,10 @@ container: {
     margin: 10,
     },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    //justifyContent: "space-between",
+    marginTop: 10,
+    alignItems: "center",
   },
   columns: {
     flexDirection: 'column',
@@ -76,11 +82,12 @@ container: {
   label: {
     fontSize: 16,
     color: '#777', // Color para etiquetas
-    marginRight: 5, // Espacio entre etiqueta y valor
+    marginLeft: 10, // Espacio entre etiqueta y valor
+    textAlign: "left",
   },
   value: {
     fontSize: 16,
-    color: '#333', // Color para valores
+    color: '#fff', // Color blanco para el texto del estado
   },
   divider: {
     height: 1,
