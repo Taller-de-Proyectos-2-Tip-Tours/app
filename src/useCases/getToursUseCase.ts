@@ -8,8 +8,7 @@ import {
 
 export const getToursUseCase = async (filters) => {
   try {
-    //let openFilter = { dateState: "abierto" };
-    let openFilter = { state: "abierto" };
+    let openFilter = { state: "abierto" , dateState: "abierto"};
     console.log(`Executing getToursUseCase with filters: ${JSON.stringify({ ...openFilter, ...filters })}`);
     const data = await fetchDataFromApi(API_URL_TOURS, { ...openFilter, ...filters });
      
