@@ -80,19 +80,6 @@ export const TourDetail = (props) => {
         <Text key={4} style={styles.label}>
           {tourDetail.description}
         </Text>
-        {/* <View key={4} style={styles.divider} />
-        <Text key={5} style={styles.title}>
-          Cupo maximo {tourDetail.maxCapacity} personas
-        </Text>
-        <Text key={6} style={styles.label}>
-          Duración {tourDetail.duration} hs
-        </Text>
-        <View key={7} style={styles.row}>
-          <Text style={styles.label}>{tourDetail.city}</Text>
-          <Text style={styles.label}>
-            El guia habla en: {tourDetail.language}
-          </Text>
-        </View> */}
         <View key={5} style={styles.row}>
           <Icon name="map-marker" size={25} color="#4E598C" />
           <Text style={styles.label2}>
@@ -215,20 +202,9 @@ export const TourDetail = (props) => {
             ))}
           </MapView>
         </View>
-        {/* <Text key={12} style={styles.title}>
-          Punto de encuentro
-        </Text>
-        <Text key={13} style={styles.label}>
-          {tourDetail.meetingPointDescription}
-        </Text> */}
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        {/* {tourDetail.comments.map((item, index) => (
-          <Text key={15 + index} numberOfLines={2} style={styles.comment}>
-            {item.userName}: {item.comment}
-          </Text>
-        ))} */}
         <FlatList
         data={tourDetail.comments}
         style={{marginVertical: 10}}
