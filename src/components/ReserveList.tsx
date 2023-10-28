@@ -23,7 +23,7 @@ export const ReserveList = ({ style, tours }) => {
 
 const ReserveListRow = (props) => {
   const navigation = useNavigation();
-  const { id, tourId, date, people, name } = props.data;
+  const { id, tourId, date, people, name, state } = props.data;
 
   return (
     <TouchableOpacity
@@ -42,6 +42,10 @@ const ReserveListRow = (props) => {
               style={styles.body}
               numberOfLines={2}
             >{`Cantidad de personas: ${people}`}</Text>
+            <Text
+              style={styles.body}
+              numberOfLines={2}
+            >{`Estado: ${state}`}</Text>
           </View>
         </View>
         <View style={styles.divider} />
