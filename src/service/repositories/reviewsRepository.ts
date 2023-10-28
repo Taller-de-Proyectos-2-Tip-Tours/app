@@ -19,22 +19,3 @@ export const fetchReviewsFromApi = async (url, queryParams) => {
     throw error;
   }
 };
-
-// export const fetchReviewsFromApi = async (queryParams) => {
-//   try {
-//     const response = await fetch(API_URL_REVIEWS + serializeQuerys(queryParams), {
-//       method: "GET",
-//       headers: {
-//         Accept: "application/json",
-//         "Content-type": "application/json",
-//       },
-//     });
-//     if (!response.ok) {
-//       console.log(`Error response on fetchReviewsFromApi ${response}`);
-//       throw new Error("Network response was not ok");
-//     }
-//     return await response.json();
-//   } catch (error) {
-//     throw error;
-//   }
-// };

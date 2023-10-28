@@ -15,6 +15,7 @@ import { transformDateToString } from "../useCases/utils";
 import IntegerSelector from "./AmountSelector";
 import CheckboxDropdown from "./CheckboxDropdown";
 import { PhotoCarousel } from "./PhotoCarousel";
+import  CommentItem from './CommentItem';
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
@@ -205,12 +206,20 @@ export const TourDetail = (props) => {
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        <FlatList
+        {/* <FlatList
         data={tourDetail.comments}
         style={{marginVertical: 10}}
         renderItem={({item}) => <Text style={styles.comment}> {item.userName}: {item.comment}
         </Text>}
         keyExtractor={item => item.id}
+        /> */}
+        <FlatList
+        data={tourDetail.comments}
+        style={{ marginVertical: 10 }}
+        renderItem={({ item }) => <CommentItem item={item} />}
+        keyExtractor={(item) => item._id.$oid}
+
+       
         />
       </ScrollView>
     </View>

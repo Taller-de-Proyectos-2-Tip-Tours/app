@@ -18,7 +18,8 @@ export const getToursUseCase = async (filters) => {
       // Aquí puedes llamar a una función para obtener los comentarios de cada tour
       let totalRatings = 0;
       let totalRatingValue = 0;
-      const comments = await fetchReviewsFromApi(API_URL_REVIEWS+ `/${item._id.$oid}`, undefined);
+      let activeFilter = { state: "active" };
+      const comments = await fetchReviewsFromApi(API_URL_REVIEWS+ `/${item._id.$oid}`, { ...activeFilter });
       comments.forEach((comment) => {
         totalRatings++;
         totalRatingValue += comment.stars; 
@@ -64,7 +65,8 @@ export const getTourUseCase = async (id) => {
     let totalRatingValue = 0;
     console.log(`Executing getTourUseCase with id: ${id})}`);
     const item = await fetchDataFromApi(API_URL_TOURS + `/${id}`, undefined);
-    const comments = await fetchReviewsFromApi(API_URL_REVIEWS+ `/${id}`, undefined); 
+    let activeFilter = { state: "active" };
+    const comments = await fetchReviewsFromApi(API_URL_REVIEWS+ `/${id}`, { ...activeFilter });
     comments.forEach((comment) => {
       totalRatings++;
       totalRatingValue += comment.stars; 
