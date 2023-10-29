@@ -21,10 +21,11 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const { width } = Dimensions.get("window");
 
 export const TourDetail = (props) => {
-  const { isReserve, handleBooking, reservedDate, handleCancelBooking } = props;
+  const { isReserve, handleBooking, reservedDate, handleCancelBooking, reservedState } = props;
 
   const [tourDetail, setTourDetail] = useState(props.tourDetail);
   const [reserveDate, setReserveDates] = useState(reservedDate);
+  const [reserveState, setReserveStates] = useState(reservedState);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [participants, setParticipants] = useState(1);
 
@@ -57,6 +58,23 @@ export const TourDetail = (props) => {
     const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
     const reserveTimestap = reserveDate.getTime() - twentyFourHoursInMilliseconds;
     return reserveTimestap <= today.getTime();
+  };
+
+  const borderColors = {
+    abierto: 'green', 
+    cancelado: 'red',  
+    finalizado: 'blue',
+  };
+
+  const borderColor = borderColors[reserveState] || "#4E598C"; 
+
+  const stateStyle = {
+    backgroundColor: borderColor,
+    color: 'white',
+    padding: 4,
+    borderRadius: 5, // Agrega bordes redondeados al cartel
+    paddingHorizontal: 8, // Espacio entre el texto y el borde
+    alignSelf: 'centre', 
   };
 
   return (
@@ -114,11 +132,18 @@ export const TourDetail = (props) => {
             </>
           ) : (
             <>
-              {/* aca hay que buscar la menera de mostrar la fecha de la reserva */}
-              <Text style={styles.label3}>
+              <Text style={{...styles.label3, marginTop: 10 }}>
                 Fecha y hora seleccionada {"\n"}{" "}
                 {reserveDate ? transformDateToString(reservedDate) : ""}
               </Text>
+              {/* <Text style={{...styles.label3, marginTop: 10 }}>
+                Estado: {"\n"}{" "}
+                {reserveState}
+              </Text> */}
+               <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
+              
+
+
             </>
           )}
         </View>
@@ -206,20 +231,12 @@ export const TourDetail = (props) => {
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-        {/* <FlatList
-        data={tourDetail.comments}
-        style={{marginVertical: 10}}
-        renderItem={({item}) => <Text style={styles.comment}> {item.userName}: {item.comment}
-        </Text>}
-        keyExtractor={item => item.id}
-        /> */}
+
         <FlatList
         data={tourDetail.comments}
         style={{ marginVertical: 10 }}
         renderItem={({ item }) => <CommentItem item={item} />}
-        keyExtractor={(item) => item._id.$oid}
-
-       
+        keyExtractor={(item) => item._id.$oid}  
         />
       </ScrollView>
     </View>
@@ -278,9 +295,10 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   label3: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#333333",
     textAlign: "center",
+    fontWeight: "bold",
   },
   buttonText: {
     fontSize: 18,

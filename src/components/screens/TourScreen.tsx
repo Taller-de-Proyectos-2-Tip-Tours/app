@@ -14,6 +14,7 @@ export default function TourScreen({ route }) {
   let tourId = route.params.tourId;
   let reserveId = route.params.reserveId;
   let reservedDate = route.params.reservedDate;
+  let reservedState = route.params.reservedState;
   let isReserve = tourId != undefined;
   let navigation = useNavigation();
 
@@ -109,6 +110,7 @@ export default function TourScreen({ route }) {
           tourDetail={tourDetail}
           isReserve={isReserve}
           reservedDate={reservedDate}
+          reservedState = {reservedState}
           handleBooking={handleBooking}
           handleCancelBooking={handleCancelBooking}
         />
