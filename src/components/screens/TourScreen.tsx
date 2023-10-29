@@ -11,6 +11,7 @@ import {
   postReviewUseCase,
 } from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
+import { transformDateToString_2 } from "../../useCases/utils";
 
 export default function TourScreen({ route }) {
   let tour = route.params.tour;
@@ -88,17 +89,22 @@ export default function TourScreen({ route }) {
       userEmail: currentUser.user.email,
       userName: currentUser.user.name,
     };
-    postReviewUseCase(tourId, body)
+    const today = new Date();
+    postReviewUseCase(tourDetail.id, body)
       .then((data) => {
         let reviews = tourDetail.comments;
-        reviews.push({
-          user: currentUser.user.name,
+        const newComment = {
+          _id: { $oid: '1' }, // Estructura correcta para el objeto _id.$oid
+          userName: currentUser.user.name,
           comment: review.comment,
-        });
+          stars: review.rating,
+          date: today,
+        };
+        reviews.push(newComment);
         console.log("reviews", reviews);
         let newDetail = {comments : reviews , ...tourDetail}
         setTourDetail(newDetail);
-        showBookingSuccess(`Se mando el commentario correctamente`);
+        showBookingSuccess(`Tu comentario se recibió correctamente`);
       })
       .catch((err) => {
         showBookingError(err.message);

@@ -153,10 +153,6 @@ export const TourDetail = (props) => {
                {reserveState && (
                 <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
                 )}
-               
-              
-
-
             </>
           )}
         </View>
