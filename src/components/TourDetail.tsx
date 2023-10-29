@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import StarRating from "react-native-star-rating-widget";
@@ -15,6 +15,7 @@ import { transformDateToString } from "../useCases/utils";
 import IntegerSelector from "./AmountSelector";
 import CheckboxDropdown from "./CheckboxDropdown";
 import { PhotoCarousel } from "./PhotoCarousel";
+import  CommentItem from './CommentItem';
 import Icon from "react-native-vector-icons/FontAwesome";
 import CommentsModal from "./CommentsModal";
 
@@ -32,6 +33,7 @@ export const TourDetail = (props) => {
 
   const [tourDetail, setTourDetail] = useState(props.tourDetail);
   const [reserveDate, setReserveDates] = useState(reservedDate);
+  const [reservedState, setReserveStates] = useState(reserveState);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [participants, setParticipants] = useState(1);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -68,6 +70,23 @@ export const TourDetail = (props) => {
     return reserveTimestap <= today.getTime();
   };
 
+  const borderColors = {
+    abierto: 'green', 
+    cancelado: 'red',  
+    finalizado: 'blue',
+  };
+
+  const borderColor = borderColors[reservedState] || "#4E598C"; 
+
+  const stateStyle = {
+    backgroundColor: borderColor,
+    color: 'white',
+    padding: 4,
+    borderRadius: 5, // Agrega bordes redondeados al cartel
+    paddingHorizontal: 8, // Espacio entre el texto y el borde
+    alignSelf: 'centre', 
+  };
+
   return (
     <View style={styles.columns}>
       <ScrollView style={styles.scrollView}>
@@ -90,19 +109,6 @@ export const TourDetail = (props) => {
         <Text key={4} style={styles.label}>
           {tourDetail.description}
         </Text>
-        {/* <View key={4} style={styles.divider} />
-        <Text key={5} style={styles.title}>
-          Cupo maximo {tourDetail.maxCapacity} personas
-        </Text>
-        <Text key={6} style={styles.label}>
-          Duración {tourDetail.duration} hs
-        </Text>
-        <View key={7} style={styles.row}>
-          <Text style={styles.label}>{tourDetail.city}</Text>
-          <Text style={styles.label}>
-            El guia habla en: {tourDetail.language}
-          </Text>
-        </View> */}
         <View key={5} style={styles.row}>
           <Icon name="map-marker" size={25} color="#4E598C" />
           <Text style={styles.label2}>
@@ -136,11 +142,18 @@ export const TourDetail = (props) => {
             </>
           ) : (
             <>
-              {/* aca hay que buscar la menera de mostrar la fecha de la reserva */}
-              <Text style={styles.label3}>
+              <Text style={{...styles.label3, marginTop: 10 }}>
                 Fecha y hora seleccionada {"\n"}{" "}
                 {reserveDate ? transformDateToString(reservedDate) : ""}
               </Text>
+              {/* <Text style={{...styles.label3, marginTop: 10 }}>
+                Estado: {"\n"}{" "}
+                {reserveState}
+              </Text> */}
+               <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
+              
+
+
             </>
           )}
         </View>
@@ -247,24 +260,15 @@ export const TourDetail = (props) => {
             ))}
           </MapView>
         </View>
-        {/* <Text key={12} style={styles.title}>
-          Punto de encuentro
-        </Text>
-        <Text key={13} style={styles.label}>
-          {tourDetail.meetingPointDescription}
-        </Text> */}
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
+
         <FlatList
-          data={tourDetail.comments}
-          style={{ marginVertical: 10 }}
-          renderItem={({ item }) => (
-            <Text style={styles.comment}>
-              {item.user}: {item.comment}
-            </Text>
-          )}
-          keyExtractor={(item) => item.id}
+        data={tourDetail.comments}
+        style={{ marginVertical: 10 }}
+        renderItem={({ item }) => <CommentItem item={item} />}
+        keyExtractor={(item) => item._id.$oid}  
         />
       </ScrollView>
     </View>
@@ -323,9 +327,10 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   label3: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#333333",
     textAlign: "center",
+    fontWeight: "bold",
   },
   buttonText: {
     fontSize: 18,

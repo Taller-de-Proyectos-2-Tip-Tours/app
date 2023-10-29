@@ -14,3 +14,8 @@ export function formatDate(dateString) {
     let formated = formatDate(item);
     return `${formated.date} - ${formated.time}`;
   }
+
+  export const transformDateToString_2 = (item) => {
+    let formated = formatDate(item);
+    return `${formated.date}`;
+  }

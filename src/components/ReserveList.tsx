@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { transformDateToString } from "../useCases/utils";
+import ReserveListContainer from "./ReserveListContainer";
 
 export const ReserveList = ({ style, tours }) => {
   return (
@@ -27,25 +28,14 @@ const ReserveListRow = (props) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id, reserveState: state})}
+      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id, reservedState: state})}
     >
-      <View style={styles.container}>
-        <View style={styles.row}>
-          <View style={styles.columns}>
-            <Text style={styles.title} numberOfLines={2}>
-              {name}
-            </Text>
-            <Text
-              style={styles.body}
-            >{`Fecha y hora:  ${transformDateToString(date)}`}</Text>
-            <Text
-              style={styles.body}
-              numberOfLines={2}
-            >{`Cantidad de personas: ${people}`}</Text>
-          </View>
-        </View>
-        <View style={styles.divider} />
-      </View>
+      <ReserveListContainer
+        name= {name}
+        date= {transformDateToString(date)}
+        people={people}
+        state= {state}
+      />
     </TouchableOpacity>
   );
 };

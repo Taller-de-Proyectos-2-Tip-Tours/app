@@ -8,7 +8,7 @@ describe('HomeScreen', () => {
     const { getByText } = render(<LoginScreen />);
     
     // Check if "Tip Tour" text is rendered
-    const tipTourText = getByText('Tip Tour');
+    const tipTourText = getByText('Tip Tours');
     expect(tipTourText).toBeTruthy();
     
     // Check if the button with the title "Ver paseos" is rendered

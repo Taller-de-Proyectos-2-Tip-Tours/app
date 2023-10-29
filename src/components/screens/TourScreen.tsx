@@ -18,6 +18,7 @@ export default function TourScreen({ route }) {
   let reserveId = route.params.reserveId;
   let reserveState = route.params.reserveState;
   let reservedDate = route.params.reservedDate;
+  let reservedState = route.params.reservedState;
   let isReserve = tourId != undefined;
   let navigation = useNavigation();
 
@@ -55,7 +56,7 @@ export default function TourScreen({ route }) {
     };
     await postBookingUseCase(body)
       .then((data) => {
-        showBookingSuccess(`Se realizo la reserva correctamente`);
+        showBookingSuccess(`Se realizó la reserva correctamente`);
 
         setTimeout(() => {
           navigation.navigate("bookingTab");
@@ -69,7 +70,7 @@ export default function TourScreen({ route }) {
   const handleCancelBooking = async () => {
     cancelBookingUseCase(reserveId)
       .then((data) => {
-        showBookingSuccess(`Se cancelo la reserva correctamente`);
+        showBookingSuccess(`Se canceló la reserva correctamente`);
 
         navigation.goBack();
         navigation.navigate("TourList");
@@ -139,6 +140,7 @@ export default function TourScreen({ route }) {
           reserveState={reserveState}
           isReserve={isReserve}
           reservedDate={reservedDate}
+          reservedState = {reservedState}
           handleBooking={handleBooking}
           handleCancelBooking={handleCancelBooking}
           handleReviewPosting={handleReviewPosting}
