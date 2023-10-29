@@ -88,6 +88,11 @@ export const TourDetail = (props) => {
     textAlign: 'center', 
   };
 
+  tourDetail.comments = tourDetail.comments.map((comment) => ({
+    ...comment,
+    date: new Date(comment.date), // Supongamos que "date" contiene las fechas en formato válido para Date
+    }));
+
   return (
     <View style={styles.columns}>
       <ScrollView style={styles.scrollView}>
@@ -269,11 +274,13 @@ export const TourDetail = (props) => {
           Comentarios
         </Text>
 
+        
+
         <FlatList
-        data={tourDetail.comments}
-        style={{ marginVertical: 10 }}
-        renderItem={({ item }) => <CommentItem item={item} />}
-        keyExtractor={(item) => item._id.$oid}  
+         data={tourDetail.comments.sort((a, b) => b.date - a.date)}
+         style={{ marginVertical: 10 }}
+         renderItem={({ item }) => <CommentItem item={item} />}
+         keyExtractor={(item) => item._id.$oid}  
         />
       </ScrollView>
     </View>
