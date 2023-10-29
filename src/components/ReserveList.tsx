@@ -28,7 +28,7 @@ const ReserveListRow = (props) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id, reservedState: state})}
+      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id, reserveState: state})}
     >
       <ReserveListContainer
         name= {name}

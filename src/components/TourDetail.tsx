@@ -150,7 +150,10 @@ export const TourDetail = (props) => {
                 Estado: {"\n"}{" "}
                 {reserveState}
               </Text> */}
-               <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
+               {reserveState && (
+                <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
+                )}
+               
               
 
 
