@@ -237,7 +237,7 @@ export const TourDetail = (props) => {
         }
 
         <View key={10} style={styles.ratingContainer}>
-          <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
+          <Text style={styles.label}>{tourDetail.numRatings} valoraciones</Text>
           <StarRating
             rating={tourDetail.averageRating}
             onChange={() => {}}
