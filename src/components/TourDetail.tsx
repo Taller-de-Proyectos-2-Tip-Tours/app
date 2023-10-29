@@ -172,7 +172,8 @@ export const TourDetail = (props) => {
           )}
         </View>
         {
-          reserveState != "finalizado" &&
+          //reserveState != "finalizado" &&
+          (reserveState != "finalizado" && reserveState != "cancelado") &&
           <Pressable
           key={9}
           style={[
