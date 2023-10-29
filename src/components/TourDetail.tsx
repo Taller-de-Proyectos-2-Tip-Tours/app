@@ -214,7 +214,7 @@ export const TourDetail = (props) => {
             </Text>
           )}
         </>
-        {reserveState == "finalizado" && (
+        {
           <>
             <Pressable
               key={26}
@@ -232,7 +232,7 @@ export const TourDetail = (props) => {
               onSelect={handleReviewPosting}
             />
           </>
-        )}
+        }
 
         <View key={10} style={styles.ratingContainer}>
           <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>

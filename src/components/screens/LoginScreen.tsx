@@ -1,16 +1,14 @@
 // HomeScreen.js
-import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Text, ImageBackground } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
   GoogleSigninButton,
-  statusCodes,
 } from "@react-native-google-signin/google-signin";
 import Toast from "react-native-toast-message";
-import messaging from '@react-native-firebase/messaging';
-
+import messaging from "@react-native-firebase/messaging";
+import { loginUseCase } from "../../useCases/login/loginUseCase";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -25,13 +23,15 @@ export default function LoginScreen() {
       text1: `Bienvenido ${userName}`,
       visibilityTime: 3000, // Duration in milliseconds
     });
-
-    messaging()
-      .getToken()
-      .then(token => {
-        console.log("Token", token);
-      });
   };
+
+  const sendToken = async (email) => {
+    let token = await messaging().getToken()
+    loginUseCase(email, token).then((response) => {
+      console.log(`Success response from login use case ${response}`)
+    })
+  }
+
 
   const showLoginError = () => {
     Toast.show({
@@ -51,6 +51,7 @@ export default function LoginScreen() {
         const userInfo = await GoogleSignin.signIn();
         // You can use userInfo to access user details, like email and name.
         console.log("Google Sign-In Successful", userInfo);
+        sendToken(userInfo.user.email)
         showLoginSuccess(userInfo.user.name);
         navigation.replace("Home");
       }
@@ -67,6 +68,7 @@ export default function LoginScreen() {
       showLoginSuccess(userInfo.user.name);
       // You can use userInfo to access user details, like email and name.
       console.log("Google Sign-In Successful silently", userInfo);
+      sendToken(userInfo.user.email)
       showLoginSuccess(userInfo.user.name);
       navigation.replace("Home");
     } catch (error) {

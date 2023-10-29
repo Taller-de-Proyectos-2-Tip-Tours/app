@@ -1,6 +1,5 @@
 import React from "react";
-import { useState, useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./src/components/screens/LoginScreen";
@@ -13,10 +12,12 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import ReservesScreen from "./src/components/screens/ReservesScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import * as Device from 'expo-device';
+import { useNavigation } from "@react-navigation/native";
+import { createNavigationContainerRef } from "@react-navigation/native";
+import messaging from "@react-native-firebase/messaging";
+import NotificationHistoryScreen from "./src/components/screens/NotificationHistoryScreen";
+import { storeNotificationHistoryUseCase } from "./src/useCases/notification/storeNotificationHistoryUseCase";
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-
 
 const ignoreWarns = [
   "EventEmitter.removeListener",
@@ -30,6 +31,10 @@ const ignoreWarns = [
   "Possible Unhandled Promise Rejection",
 ];
 
+const ignoreError = [
+  "ViewPropTypes will be removed from React Native",
+];
+
 const warn = console.warn;
 console.warn = (...arg) => {
   for (const warning of ignoreWarns) {
@@ -40,46 +45,21 @@ console.warn = (...arg) => {
   warn(...arg);
 };
 
-LogBox.ignoreLogs(ignoreWarns);
-
-GoogleSignin.configure();
-const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
-
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+const error = console.error;
+console.error = (...arg) => {
+  for (const error of ignoreError) {
+    if (arg[0].startsWith(error)) {
       return;
     }
-    token = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants.expoConfig.extra.eas.projectId,
-    });
+  }
+  error(...arg);
+};
 
-    console.log(`Token data ${token.data}`);
-    console.log(`Token type ${token.type}`);
-    console.log(`Token projectId ${ Constants.expoConfig.extra.eas.projectId}`);
-  
 
-  return token;
-}
+LogBox.ignoreLogs(ignoreWarns);
+LogBox.ignoreLogs(ignoreError);
 
+GoogleSignin.configure();
 function StackNavigator() {
   return (
     <Stack.Navigator>
@@ -104,11 +84,13 @@ function StackReserveNavigator() {
         name="ReserveList"
         options={{ title: "Mis reservas" }}
         component={ReservesScreen}
+        getId={({ params }) => params.id}
       />
       <Stack.Screen
         name="ReserveDetail"
         options={{ title: "Detalle de la reserva" }}
         component={TourScreen}
+        getId={({ params }) => params.id}
       />
     </Stack.Navigator>
   );
@@ -127,6 +109,8 @@ function TabNavigator() {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "bookingTab") {
             iconName = focused ? "book" : "book-outline";
+          } else if (route.name === "notificationHistoryTab") {
+            iconName = focused ? "notifications" : "notifications-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -144,6 +128,11 @@ function TabNavigator() {
         options={{ title: "Mis reservas", headerShown: false }}
       />
       <Tab.Screen
+        name="notificationHistoryTab"
+        component={NotificationHistoryScreen}
+        options={{ title: "Notificaciones" }}
+      />
+      <Tab.Screen
         name="profileTab"
         component={ProfileScreen}
         options={{ title: "Mi perfil" }}
@@ -154,35 +143,86 @@ function TabNavigator() {
 
 const toastConfig = {
   success: (props) => (
-    <BaseToast style={{ width: "90%", borderLeftColor: 'green', ...props.style}} {...props} />
+    <BaseToast
+      style={{ width: "90%", borderLeftColor: "green", ...props.style }}
+      {...props}
+    />
   ),
   error: (props) => (
-    <BaseToast style={{ width: "90%",  borderLeftColor: 'red', ...props.style }}
-    text1NumberOfLines={2}
-     {...props} />
+    <BaseToast
+      style={{ width: "90%", borderLeftColor: "red", ...props.style }}
+      text1NumberOfLines={2}
+      {...props}
+    />
   ),
 };
 
+function getToken() {
+  messaging()
+    .getToken()
+    .then((token) => {
+      console.log("Token", token);
+    })
+    .catch(error => {
+      console.warn(`${error} permission rejected`);
+    });
+}
+async function requestUserPermission() {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') {
+    alert('Si quieres recibir notificaciones otorgale el permiso a TipTour desde configuración.');
+    return;
+  }
+  getToken()
+}
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  const navigationRef = createNavigationContainerRef();
+
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    requestUserPermission();
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
+    // Usado ara abrir la app
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "Message handled and opened the app",
+        JSON.stringify(remoteMessage)
+      );
+      const { tourId, date, reserveId, state } = remoteMessage.data;
+      navigationRef.navigate("Home", {
+        screen: "bookingTab",
+        params: {
+          screen: "ReserveDetail",
+          params: {
+            tourId: tourId,
+            reservedDate: date,
+            reserveId: reserveId,
+            reserveState: state,
+          },
+        },
+      });
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      storeNotificationHistoryUseCase(remoteMessage);
+      console.log("Message handled in the background!", remoteMessage);
     });
 
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
+    // usado cuando la app esta abierta
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      storeNotificationHistoryUseCase(remoteMessage);
+      console.log("A new FCM message arrived!", JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
   }, []);
 
   return (
@@ -192,7 +232,7 @@ export default function App() {
         backgroundColor="#4E598C"
         barStyle="light-content"
       />
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
