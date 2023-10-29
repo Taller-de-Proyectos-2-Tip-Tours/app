@@ -82,9 +82,10 @@ export const TourDetail = (props) => {
     backgroundColor: borderColor,
     color: 'white',
     padding: 4,
-    borderRadius: 5, // Agrega bordes redondeados al cartel
-    paddingHorizontal: 8, // Espacio entre el texto y el borde
-    alignSelf: 'centre', 
+    borderRadius: 10, // Agrega bordes redondeados al cartel
+    paddingHorizontal: 12, // Espacio entre el texto y el borde
+    marginVertical: 10,
+    textAlign: 'center', 
   };
 
   return (
@@ -170,7 +171,9 @@ export const TourDetail = (props) => {
             <></>
           )}
         </View>
-        <Pressable
+        {
+          reserveState != "finalizado" &&
+          <Pressable
           key={9}
           style={[
             styles.toggleButton,
@@ -196,6 +199,8 @@ export const TourDetail = (props) => {
               : "Reservar"}
           </Text>
         </Pressable>
+        }
+        
         <>
           {isReserveButtonDisabled() && reserveState == "abierto" && (
             <Text
@@ -210,7 +215,7 @@ export const TourDetail = (props) => {
             </Text>
           )}
         </>
-        {
+        { isReserve && reserveState == "finalizado" &&
           <>
             <Pressable
               key={26}
