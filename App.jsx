@@ -17,6 +17,7 @@ import { createNavigationContainerRef } from "@react-navigation/native";
 import messaging from "@react-native-firebase/messaging";
 import NotificationHistoryScreen from "./src/components/screens/NotificationHistoryScreen";
 import { storeNotificationHistoryUseCase } from "./src/useCases/notification/storeNotificationHistoryUseCase";
+import * as Notifications from 'expo-notifications';
 
 const ignoreWarns = [
   "EventEmitter.removeListener",
@@ -30,6 +31,10 @@ const ignoreWarns = [
   "Possible Unhandled Promise Rejection",
 ];
 
+const ignoreError = [
+  "ViewPropTypes will be removed from React Native",
+];
+
 const warn = console.warn;
 console.warn = (...arg) => {
   for (const warning of ignoreWarns) {
@@ -40,7 +45,19 @@ console.warn = (...arg) => {
   warn(...arg);
 };
 
+const error = console.error;
+console.error = (...arg) => {
+  for (const error of ignoreError) {
+    if (arg[0].startsWith(error)) {
+      return;
+    }
+  }
+  error(...arg);
+};
+
+
 LogBox.ignoreLogs(ignoreWarns);
+LogBox.ignoreLogs(ignoreError);
 
 GoogleSignin.configure();
 function StackNavigator() {
@@ -140,15 +157,28 @@ const toastConfig = {
   ),
 };
 
+function getToken() {
+  messaging()
+    .getToken()
+    .then((token) => {
+      console.log("Token", token);
+    })
+    .catch(error => {
+      console.warn(`${error} permission rejected`);
+    });
+}
 async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  if (enabled) {
-    console.log("Authorization status:", authStatus);
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
   }
+  if (finalStatus !== 'granted') {
+    alert('Si quieres recibir notificaciones otorgale el permiso a TipTour desde configuración.');
+    return;
+  }
+  getToken()
 }
 
 const Stack = createStackNavigator();
@@ -159,11 +189,6 @@ export default function App() {
 
   useEffect(() => {
     requestUserPermission();
-    messaging()
-      .getToken()
-      .then((token) => {
-        console.log("Token", token);
-      });
 
     // Usado ara abrir la app
     messaging().onNotificationOpenedApp((remoteMessage) => {
@@ -171,7 +196,7 @@ export default function App() {
         "Message handled and opened the app",
         JSON.stringify(remoteMessage)
       );
-      const { tourId, date, id, state } = remoteMessage.data;
+      const { tourId, date, reserveId, state } = remoteMessage.data;
       navigationRef.navigate("Home", {
         screen: "bookingTab",
         params: {
@@ -179,7 +204,7 @@ export default function App() {
           params: {
             tourId: tourId,
             reservedDate: date,
-            reserveId: id,
+            reserveId: reserveId,
             reserveState: state,
           },
         },

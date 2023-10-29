@@ -23,7 +23,7 @@ export const fetchDataFromApi = async (url, queryParams) => {
 
 export const postDataToApi = async (url, queryParams, body) => {
   try {
-    console.log(`postDataToApi to ${url} with ${serializeQuerys(queryParams)} and body : ${JSON.stringify(body)}`);
+    console.log(`postDataToApi to ${url} with queries param: ${serializeQuerys(queryParams)} and body : ${JSON.stringify(body)}`);
     const response = await fetch(url + serializeQuerys(queryParams), {
       method: "POST",
       headers: {
