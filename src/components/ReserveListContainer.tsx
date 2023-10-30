@@ -18,14 +18,13 @@ const ReserveListContainer = ({ name, date, people, state }) => {
         padding: 4,
         borderRadius: 5, // Agrega bordes redondeados al cartel
         paddingHorizontal: 8, // Espacio entre el texto y el borde
-        alignSelf: 'flex-end', 
+        alignSelf: 'flex-end', // Alinea el cartel a la derecha
       };
 
 
 
   return (
     <View style={[styles.container, { borderColor }]}>
-    <View style={styles.row}>
       <View style={styles.columns}>
         <Text style={styles.title} numberOfLines={2}>
           {name}
@@ -41,12 +40,9 @@ const ReserveListContainer = ({ name, date, people, state }) => {
         </View>
 
         {state && (
-           <View style={[styles.infoContainer, { marginLeft: 'auto' }]}>
            <Text style={[styles.value, stateStyle]}>{state.toUpperCase()}</Text>
-           </View>
         )}
       </View>
-    </View>
     <View style={styles.divider} />
   </View>
   );
@@ -54,7 +50,7 @@ const ReserveListContainer = ({ name, date, people, state }) => {
 
 const styles = StyleSheet.create({
 container: {
-    padding: 16,
+    padding: 20,
     borderRadius: 10,
     borderWidth: 2, // Ancho de los bordes
     elevation: 3,

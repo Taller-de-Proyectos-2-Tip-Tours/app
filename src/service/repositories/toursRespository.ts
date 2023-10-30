@@ -34,7 +34,8 @@ export const postDataToApi = async (url, queryParams, body) => {
     });
     let responseJson = await response.json();
     if (!response.ok) {
-      throw Error(`${responseJson.error}`);
+      console.log(`Error on postDataToApi ${responseJson}`);
+      throw Error(`${responseJson.error ? responseJson.error : responseJson._schema[0]}`);
     }
     return responseJson
   } catch (error) {
@@ -55,7 +56,7 @@ export const deleteDataToApi = async (url, queryParams, body) => {
     });
     let responseJson = await response.json();
     if (!response.ok) {
-      throw Error(`${responseJson.error}`);
+      throw Error(`${responseJson.error ? responseJson.error : responseJson._schema[0]}`);
     }
     return responseJson
   } catch (error) {

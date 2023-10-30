@@ -82,10 +82,16 @@ export const TourDetail = (props) => {
     backgroundColor: borderColor,
     color: 'white',
     padding: 4,
-    borderRadius: 5, // Agrega bordes redondeados al cartel
-    paddingHorizontal: 8, // Espacio entre el texto y el borde
-    alignSelf: 'centre', 
+    borderRadius: 10, // Agrega bordes redondeados al cartel
+    paddingHorizontal: 12, // Espacio entre el texto y el borde
+    marginVertical: 10,
+    textAlign: 'center', 
   };
+
+  tourDetail.comments = tourDetail.comments.map((comment) => ({
+    ...comment,
+    date: new Date(comment.date), // Supongamos que "date" contiene las fechas en formato válido para Date
+    }));
 
   return (
     <View style={styles.columns}>
@@ -153,10 +159,6 @@ export const TourDetail = (props) => {
                {reserveState && (
                 <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
                 )}
-               
-              
-
-
             </>
           )}
         </View>
@@ -174,7 +176,10 @@ export const TourDetail = (props) => {
             <></>
           )}
         </View>
-        <Pressable
+        {
+          //reserveState != "finalizado" &&
+          (reserveState != "finalizado" && reserveState != "cancelado") &&
+          <Pressable
           key={9}
           style={[
             styles.toggleButton,
@@ -200,6 +205,8 @@ export const TourDetail = (props) => {
               : "Reservar"}
           </Text>
         </Pressable>
+        }
+        
         <>
           {isReserveButtonDisabled() && reserveState == "abierto" && (
             <Text
@@ -214,7 +221,7 @@ export const TourDetail = (props) => {
             </Text>
           )}
         </>
-        {
+        { isReserve && reserveState == "finalizado" &&
           <>
             <Pressable
               key={26}
@@ -235,7 +242,7 @@ export const TourDetail = (props) => {
         }
 
         <View key={10} style={styles.ratingContainer}>
-          <Text style={styles.label}>{tourDetail.numRatings} puntuaciones</Text>
+          <Text style={styles.label}>{tourDetail.numRatings} valoraciones</Text>
           <StarRating
             rating={tourDetail.averageRating}
             onChange={() => {}}
@@ -267,11 +274,13 @@ export const TourDetail = (props) => {
           Comentarios
         </Text>
 
+        
+
         <FlatList
-        data={tourDetail.comments}
-        style={{ marginVertical: 10 }}
-        renderItem={({ item }) => <CommentItem item={item} />}
-        keyExtractor={(item) => item._id.$oid}  
+         data={tourDetail.comments.sort((a, b) => b.date - a.date)}
+         style={{ marginVertical: 10 }}
+         renderItem={({ item }) => <CommentItem item={item} />}
+         keyExtractor={(item) => item._id.$oid}  
         />
       </ScrollView>
     </View>

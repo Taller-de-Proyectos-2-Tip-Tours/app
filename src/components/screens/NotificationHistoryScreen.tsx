@@ -43,7 +43,7 @@ const NotificationHistoryScreen = () => {
         <View style={styles.row}>
           <Image
             style={styles.thumbail}
-            source={{ uri: item.android?.notification?.imageUrl }}
+            source={{ uri: item.notification.android.imageUrl }}
           />
           <View style={styles.columns}>
             <Text style={styles.title}>{item.notification.title}</Text>

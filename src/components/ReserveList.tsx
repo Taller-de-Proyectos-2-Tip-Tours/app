@@ -11,16 +11,26 @@ import { transformDateToString } from "../useCases/utils";
 import ReserveListContainer from "./ReserveListContainer";
 
 export const ReserveList = ({ style, tours }) => {
+  const sortedTours = [...tours]; 
+  sortedTours.sort((a, b) => {
+    if (a.state < b.state) return -1;
+    if (a.state > b.state) return 1;
+    if (a.date > b.date) return -1;
+    if (a.date < b.date) return 1;
+    return 0; 
+  });
   return (
     <View style={[style]}>
       <ScrollView>
-        {tours.map((item) => (
+        {sortedTours.map((item) => (
           <ReserveListRow data={item} key={item.id} />
         ))}
       </ScrollView>
     </View>
   );
 };
+
+
 
 const ReserveListRow = (props) => {
   const navigation = useNavigation();

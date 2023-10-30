@@ -7,6 +7,7 @@ export const fetchDataFromApi = async (queryParams) => {
       headers: {
         Accept: "application/json",
         "Content-type": "application/json",
+        "Cache-Control": "no-cache"
       },
     });
     if (!response.ok) {
