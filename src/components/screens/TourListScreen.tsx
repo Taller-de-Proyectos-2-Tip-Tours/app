@@ -80,7 +80,7 @@ export default function TourListScreen() {
       ) : error ? (
         <Text>Error: {error}</Text>
       ) : data.length == 0 ? (
-        <Text>No hay tours disponibles</Text>
+        <Text>No hay paseos disponibles</Text>
       ) : (
         <TourList style={{ flex: 3 }} tours={data} />
       )}

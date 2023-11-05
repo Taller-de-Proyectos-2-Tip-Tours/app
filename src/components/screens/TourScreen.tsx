@@ -91,20 +91,30 @@ export default function TourScreen({ route }) {
     };
     const today = new Date();
     postReviewUseCase(tourDetail.id, body)
-      .then((data) => {
-        let reviews = tourDetail.comments;
-        const newComment = {
-          _id: { $oid: '1' }, // Estructura correcta para el objeto _id.$oid
-          userName: currentUser.user.name,
-          comment: review.comment,
-          stars: review.rating,
-          date: today,
-        };
-        reviews.push(newComment);
-        console.log("reviews", reviews);
-        let newDetail = {comments : reviews , ...tourDetail}
-        setTourDetail(newDetail);
-        showBookingSuccess(`Tu comentario se recibió correctamente`);
+       .then((data) => {
+        //  let reviews = tourDetail.comments;
+        //  const newComment = {
+        //    _id: { $oid: '1' }, // Estructura correcta para el objeto _id.$oid
+        //    userName: currentUser.user.name,
+        //    comment: review.comment,
+        //    stars: review.rating,
+        //    date: today,
+        //  };
+        //  reviews.push(newComment);
+        //  console.log("reviews", reviews);
+        //  let newDetail = {
+        //   ...tourDetail,
+        //   numRatings: (parseInt(tourDetail.numRatings, 10) || 0) + 1, 
+        //   comments: reviews, 
+        // };
+        //  setTourDetail(newDetail);
+        //  showBookingSuccess(`Tu comentario se recibió correctamente`);
+        setLoading(true);
+        getTourUseCase(tourDetail.id).then((updatedTourDetail) => {
+          setTourDetail(updatedTourDetail);
+          setLoading(false);
+          showBookingSuccess(`Tu comentario se recibió correctamente`);
+        });
       })
       .catch((err) => {
         showBookingError(err.message);

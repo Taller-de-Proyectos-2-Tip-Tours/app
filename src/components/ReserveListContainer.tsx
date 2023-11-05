@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
 
-const ReserveListContainer = ({ name, date, people, state }) => {
+const ReserveListContainer = ({ name, date, people, state, tourImage }) => {
 
     const borderColors = {
         abierto: 'green', 
@@ -25,26 +25,27 @@ const ReserveListContainer = ({ name, date, people, state }) => {
 
   return (
     <View style={[styles.container, { borderColor }]}>
-      <View style={styles.columns}>
-        <Text style={styles.title} numberOfLines={2}>
-          {name}
-        </Text>
- 
-        <View style={styles.row}>
-          <Icon name="calendar" size={25} color="#4E598C" />
-          <Text style={styles.label}>{date}</Text>
+      <Text style={styles.title} numberOfLines={2}>
+        {name}
+      </Text>
+      <View style={styles.row}>
+        <Image style={styles.thumbail} source={{ uri: tourImage }} />
+        <View style={styles.columns}>
+          <View style={styles.row}>
+            <Icon name="calendar" size={25} color="#4E598C" />
+            <Text style={styles.label}>{date}</Text>
+          </View>
+          <View style={styles.row}>
+            <Icon name="user" size={25} color="#4E598C" />
+            <Text style={styles.label}>{people}</Text>
+          </View>
+          {state && (
+          <Text style={[styles.value, stateStyle]}>{state.toUpperCase()}</Text>
+          )}
         </View>
-        <View style={styles.row}>
-          <Icon name="user" size={25} color="#4E598C" />
-          <Text style={styles.label}>{people}</Text>
-        </View>
-
-        {state && (
-           <Text style={[styles.value, stateStyle]}>{state.toUpperCase()}</Text>
-        )}
       </View>
-    <View style={styles.divider} />
-  </View>
+      <View style={styles.divider} />
+    </View>
   );
 };
 
@@ -59,7 +60,7 @@ container: {
   row: {
     flexDirection: "row",
     //justifyContent: "space-between",
-    marginTop: 10,
+    //marginTop: 10,
     alignItems: "center",
   },
   columns: {
@@ -68,7 +69,7 @@ container: {
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 5,
     color: "#004E98"
   },
   infoContainer: {
@@ -80,6 +81,7 @@ container: {
     color: '#777', // Color para etiquetas
     marginLeft: 10, // Espacio entre etiqueta y valor
     textAlign: "left",
+    marginTop: 10,
   },
   value: {
     fontSize: 16,
@@ -89,6 +91,13 @@ container: {
     height: 1,
     backgroundColor: '#ccc',
     marginTop: 12,
+  },
+  thumbail: {
+    backgroundColor: "#F6F6F6",
+    width: "30%",
+    aspectRatio: 1,
+    marginRight: 16,
+    borderRadius: 10,
   },
 });
 
