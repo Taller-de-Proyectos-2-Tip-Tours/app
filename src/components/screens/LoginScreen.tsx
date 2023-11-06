@@ -10,6 +10,7 @@ import Toast from "react-native-toast-message";
 import messaging from "@react-native-firebase/messaging";
 import { loginUseCase } from "../../useCases/login/loginUseCase";
 import { storeToken } from "../../useCases/login/storeToken";
+import { firebase } from "@react-native-firebase/auth";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -27,12 +28,13 @@ export default function LoginScreen() {
   };
 
   const sendToken = async (email) => {
-    let token = await messaging().getToken()
-    loginUseCase(email, token).then((response) => {
-      console.log(`Success response from login use case ${response}`)
-    })
-  }
-
+    let token = await messaging().getToken();
+    await loginUseCase(email, token).then((response) => {
+      console.log(
+        `Success response from login use case ${JSON.stringify(response)}`
+      );
+    });
+  };
 
   const showLoginError = () => {
     Toast.show({
@@ -47,40 +49,40 @@ export default function LoginScreen() {
     try {
       await GoogleSignin.hasPlayServices();
       let userSigned = await GoogleSignin.isSignedIn();
-      console.log("Google Sign-In Successful", userSigned);
       if (!userSigned) {
         const userInfo = await GoogleSignin.signIn();
-        // You can use userInfo to access user details, like email and name.
-        console.log("Google Sign-In Successful", userInfo);
-        sendToken(userInfo.user.email)
-        showLoginSuccess(userInfo.user.name);
-        navigation.replace("Home");
+        commonLogin(userInfo);
       }
-      
     } catch (error) {
       showLoginError();
       console.error("Google Sign-In Error", error);
     }
   };
 
+  const commonLogin = async (userInfo) => {
+    await sendToken(userInfo.user.email);
+    firebase.auth().onAuthStateChanged(async function (user) {
+      if (user) {
+        let accessToken = await user.getIdToken();
+        await storeToken(accessToken);
+        showLoginSuccess(userInfo.user.name);
+        navigation.replace("Home");
+      }
+    });
+    firebase.auth().signInAnonymously();
+  };
+
   const signInSilenty = async () => {
     try {
       const userInfo = await GoogleSignin.signInSilently();
-      showLoginSuccess(userInfo.user.name);
-      // You can use userInfo to access user details, like email and name.
-      console.log("Google Sign-In Successful silently", userInfo);
-      let accessToken = (await GoogleSignin.getTokens()).accessToken
-      await storeToken(accessToken)
-      sendToken(userInfo.user.email)
-      showLoginSuccess(userInfo.user.name);
-      navigation.replace("Home");
+      commonLogin(userInfo);
     } catch (error) {
-      console.log("Google Sign-In Successful silently has error", error);
+      console.log("signInSilenty", error);
     }
   };
 
   useEffect(() => {
-    signInSilenty()
+    signInSilenty();
   });
 
   return (
