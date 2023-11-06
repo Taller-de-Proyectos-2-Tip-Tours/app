@@ -161,7 +161,7 @@ function getToken() {
   messaging()
     .getToken()
     .then((token) => {
-      console.log("Token", token);
+      console.log("Token de Firebases: ", token);
     })
     .catch(error => {
       console.warn(`${error} permission rejected`);

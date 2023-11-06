@@ -57,11 +57,21 @@ const NotificationHistoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={notificationHistory}
-        renderItem={renderNotificationItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      {notificationHistory == undefined || notificationHistory.length == 0 ? (
+        <View style={styles.textContainer}>
+          <Image
+            style={styles.thumbailEmptyState}
+            source={require("../../../assets/leaf.png")}
+          />
+          <Text>Aún no recibiste notificaciones.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={notificationHistory}
+          renderItem={renderNotificationItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      )}
     </View>
   );
 };
@@ -74,6 +84,11 @@ const styles = StyleSheet.create({
   containerItem: {
     flexDirection: "column",
     margin: 16,
+  },
+  textContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   row: {
     flexDirection: "row",
@@ -104,6 +119,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
     marginRigth: 14,
     marginLeft: 80,
+  },
+  thumbailEmptyState: {
+    width: 150,
+    height: 150,
   },
 });
 

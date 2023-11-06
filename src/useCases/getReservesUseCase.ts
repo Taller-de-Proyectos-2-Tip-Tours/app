@@ -1,5 +1,6 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { fetchDataFromApi } from "../service/repositories/reserveRepository";
+import { fetchDataFromApi } from "../service/repositories/toursRespository";
+import { API_URL_RESERVES } from "../service/Const";
 
 export const getReserves = async () => {
   try {
@@ -8,7 +9,7 @@ export const getReserves = async () => {
       travelerEmail: currentUser.user.email,
     };
     console.log(`Executing getReserves with query: ${JSON.stringify(request)}`);
-    const data = await fetchDataFromApi(request);
+    const data = await fetchDataFromApi(API_URL_RESERVES, request);
 
     return data.map((item) => ({
       id: item._id.$oid,

@@ -9,6 +9,7 @@ import {
 import Toast from "react-native-toast-message";
 import messaging from "@react-native-firebase/messaging";
 import { loginUseCase } from "../../useCases/login/loginUseCase";
+import { storeToken } from "../../useCases/login/storeToken";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -68,6 +69,8 @@ export default function LoginScreen() {
       showLoginSuccess(userInfo.user.name);
       // You can use userInfo to access user details, like email and name.
       console.log("Google Sign-In Successful silently", userInfo);
+      let accessToken = (await GoogleSignin.getTokens()).accessToken
+      await storeToken(accessToken)
       sendToken(userInfo.user.email)
       showLoginSuccess(userInfo.user.name);
       navigation.replace("Home");
