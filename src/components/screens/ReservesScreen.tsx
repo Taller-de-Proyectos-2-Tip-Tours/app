@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { getReserves } from "../../useCases/getReservesUseCase";
 import { ReserveList } from "../ReserveList";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useFocusEffect } from "@react-navigation/native";
 
-export default function ReservesScreen({ route }) {
+export default function ReservesScreen({}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
