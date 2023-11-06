@@ -2,9 +2,6 @@ import { API_URL_TOURS, API_URL_REVIEWS } from "../service/Const";
 import {
   fetchDataFromApi,
 } from "../service/repositories/toursRespository";
-import {
-  fetchReviewsFromApi,
-} from "../service/repositories/reviewsRepository";
 
 export const getToursUseCase = async (filters) => {
   try {
@@ -18,7 +15,7 @@ export const getToursUseCase = async (filters) => {
       let totalRatings = 0;
       let totalRatingValue = 0;
       let activeFilter = { state: "active" };
-      const comments = await fetchReviewsFromApi(API_URL_REVIEWS+ `/${item._id.$oid}`, { ...activeFilter });
+      const comments = await fetchDataFromApi(API_URL_REVIEWS+ `/${item._id.$oid}`, { ...activeFilter });
       comments.forEach((comment) => {
         totalRatings++;
         totalRatingValue += comment.stars; 
@@ -65,7 +62,7 @@ export const getTourUseCase = async (id) => {
     console.log(`Executing getTourUseCase with id: ${id})}`);
     const item = await fetchDataFromApi(API_URL_TOURS + `/${id}`, undefined);
     let activeFilter = { state: "active" };
-    const comments = await fetchReviewsFromApi(API_URL_REVIEWS+ `/${id}`, { ...activeFilter });
+    const comments = await fetchDataFromApi(API_URL_REVIEWS+ `/${id}`, { ...activeFilter });
     comments.forEach((comment) => {
       totalRatings++;
       totalRatingValue += comment.stars; 
