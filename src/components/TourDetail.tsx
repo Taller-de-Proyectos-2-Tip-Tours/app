@@ -274,8 +274,6 @@ export const TourDetail = (props) => {
           Comentarios
         </Text>
 
-        
-
         <FlatList
          data={tourDetail.comments.sort((a, b) => b.date - a.date)}
          style={{ marginVertical: 10 }}

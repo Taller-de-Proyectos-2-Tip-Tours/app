@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { TourDetail } from "../TourDetail";
 import Toast from "react-native-toast-message";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { getTourUseCase } from "../../useCases/getToursUseCase";
 import { cancelBookingUseCase } from "../../useCases/cancelBookingUseCase";
 import {
@@ -11,9 +11,12 @@ import {
   postReviewUseCase,
 } from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
-import { transformDateToString_2 } from "../../useCases/utils";
+import { addCalendarEvent } from "../../useCases/utils";
+import Icon from "react-native-vector-icons/FontAwesome";
+import moment from "moment";
+import * as Calendar from "expo-calendar";
 
-export default function TourScreen({ route }) {
+export default function TourScreen({ route, navigation }) {
   let tour = route.params.tour;
   let tourId = route.params.tourId;
   let reserveId = route.params.reserveId;
@@ -21,7 +24,6 @@ export default function TourScreen({ route }) {
   let reservedDate = route.params.reservedDate;
   let reservedState = route.params.reservedState;
   let isReserve = tourId != undefined;
-  let navigation = useNavigation();
 
   const [loading, setLoading] = useState(false);
   const [tourDetail, setTourDetail] = useState(tour);
@@ -94,7 +96,7 @@ export default function TourScreen({ route }) {
       .then((data) => {
         let reviews = tourDetail.comments;
         const newComment = {
-          _id: { $oid: '1' }, // Estructura correcta para el objeto _id.$oid
+          _id: { $oid: "1" }, // Estructura correcta para el objeto _id.$oid
           userName: currentUser.user.name,
           comment: review.comment,
           stars: review.rating,
@@ -102,7 +104,7 @@ export default function TourScreen({ route }) {
         };
         reviews.push(newComment);
         console.log("reviews", reviews);
-        let newDetail = {comments : reviews , ...tourDetail}
+        let newDetail = { comments: reviews, ...tourDetail };
         setTourDetail(newDetail);
         showBookingSuccess(`Tu comentario se recibió correctamente`);
       })
@@ -110,6 +112,40 @@ export default function TourScreen({ route }) {
         showBookingError(err.message);
       });
   };
+
+  const addEvent = async () => {
+    const startDate = moment(reservedDate);
+    const endDate = moment(reservedDate);
+    const [hours, minutes] = tourDetail.duration
+      .split(":")
+      .map((str) => parseInt(str, 10));
+    endDate.add(hours, "hours").add(minutes, "minutes");
+    let config = {
+      title: tourDetail.name,
+      startDate: startDate.toDate(),
+      endDate: endDate.toDate(),
+      location: tourDetail.meetingPoint,
+      alarms: [{ relativeOffset: -15, method: Calendar.AlarmMethod.DEFAULT }],
+    };
+    await addCalendarEvent(config);
+  };
+
+  React.useEffect(() => {
+    if (isReserve && reserveState == "abierto") {
+      navigation.setOptions({
+        headerRight: () => (
+          <Pressable
+            onPress={() => {
+              addEvent();
+            }}
+            style={styles.icon}
+          >
+            <Icon name="calendar" size={25} color="#4E598C" />
+          </Pressable>
+        ),
+      });
+    }
+  }, [navigation]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -146,7 +182,7 @@ export default function TourScreen({ route }) {
           reserveState={reserveState}
           isReserve={isReserve}
           reservedDate={reservedDate}
-          reservedState = {reservedState}
+          reservedState={reservedState}
           handleBooking={handleBooking}
           handleCancelBooking={handleCancelBooking}
           handleReviewPosting={handleReviewPosting}
@@ -162,5 +198,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
+  },
+  icon: {
+    marginEnd: 10,
   },
 });

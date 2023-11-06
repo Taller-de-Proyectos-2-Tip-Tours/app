@@ -38,7 +38,13 @@
     },
     "plugins": [
       "@react-native-google-signin/google-signin",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "The app needs to access your calendar."
+        }
+      ]
     ],
     "extra": {
       "eas": {
