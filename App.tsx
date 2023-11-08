@@ -9,8 +9,12 @@ import { createNavigationContainerRef } from "@react-navigation/native";
 import messaging from "@react-native-firebase/messaging";
 import { storeNotificationHistoryUseCase } from "./src/useCases/notification/storeNotificationHistoryUseCase";
 import { setupLogsUseCase } from "./src/useCases/commons/setupLogsUseCase";
-import { Stack, TabNavigator } from "./src/components/navigation/StackReserveNavigator";
-import * as Linking from 'expo-linking';
+import {
+  Stack,
+  TabNavigator,
+} from "./src/components/navigation/StackReserveNavigator";
+import * as Linking from "expo-linking";
+import { navigateToTourUseCase } from "./src/components/navigation/navigateToTourUseCase";
 
 setupLogsUseCase();
 
@@ -51,7 +55,7 @@ const handleRemoteMessage = (navigationRef, remoteMessage) => {
       },
     },
   });
-}
+};
 
 const setupMessaginUseCase = (navigationRef) => {
   messaging().onNotificationOpenedApp((remoteMessage) => {
@@ -60,48 +64,35 @@ const setupMessaginUseCase = (navigationRef) => {
       JSON.stringify(remoteMessage)
     );
     handleRemoteMessage(navigationRef, remoteMessage);
-
   });
 
-  messaging().getInitialNotification().then(remoteMessage => {
-    if (remoteMessage) {
-      console.log(
-        'Notification caused app to open from quit state:',
-        JSON.stringify(remoteMessage),
-      );
-      handleRemoteMessage(navigationRef, remoteMessage);
-    }
-  });
-}
+  messaging()
+    .getInitialNotification()
+    .then((remoteMessage) => {
+      if (remoteMessage) {
+        console.log(
+          "Notification caused app to open from quit state:",
+          JSON.stringify(remoteMessage)
+        );
+        handleRemoteMessage(navigationRef, remoteMessage);
+      }
+    });
+};
 
 export default function App() {
   const navigationRef = createNavigationContainerRef();
 
-
   useEffect(() => {
-    const handleDeepLink = ({ url }: { url: string }) => {
+    const handleDeepLink = async ({ url }: { url: string }) => {
       // Handle the deep link URL here
       // You can use this URL to navigate or perform specific actions
       console.log("Received deep link:", url);
 
       const { hostname, path, queryParams } = Linking.parse(url);
 
-      if(hostname === 'tour') {
-        navigationRef.navigate("Home", {
-          screen: "toursTab",
-          params: {
-            screen: "TourDetail",
-            params: {
-              tourId: queryParams.tourId,
-            },
-          },
-        });
+      if (hostname === "tour") {
+        navigateToTourUseCase(navigationRef, queryParams.tourId, false);
       }
-      console.log(
-        `Linked to app with hostname: ${hostname}, path: ${path} and data: ${JSON.stringify(
-          queryParams
-        )}`
-      );
     };
 
     // Add event listener for handling deep links
@@ -157,4 +148,4 @@ export default function App() {
   );
 }
 
-AppRegistry.registerComponent('app', () => App);
+AppRegistry.registerComponent("app", () => App);

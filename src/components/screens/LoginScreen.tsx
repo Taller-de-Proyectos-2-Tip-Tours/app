@@ -1,7 +1,6 @@
 // HomeScreen.js
 import React, { useEffect } from "react";
 import { StyleSheet, View, Text, ImageBackground } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -12,6 +11,9 @@ import { loginUseCase } from "../../useCases/login/loginUseCase";
 import { storeToken } from "../../useCases/login/storeToken";
 import { firebase } from "@react-native-firebase/auth";
 import { requestUserPermissionUseCase } from "../../useCases/commons/requestNotificationPermissionUseCase";
+import { navigateToTourUseCase } from "../navigation/navigateToTourUseCase";
+import * as Linking from "expo-linking";
+import { useNavigation } from "@react-navigation/native";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -61,7 +63,7 @@ export default function LoginScreen() {
   };
 
   const commonLogin = async (userInfo) => {
-    requestUserPermissionUseCase()
+    requestUserPermissionUseCase();
     await sendToken(userInfo.user.email);
     console.log("Logging with firebase");
     firebase.auth().onAuthStateChanged(async function (user) {
@@ -69,11 +71,25 @@ export default function LoginScreen() {
         let accessToken = await user.getIdToken();
         await storeToken(accessToken);
         showLoginSuccess(userInfo.user.name);
+        navigateToNextScreen();
+      }
+    });
+
+    firebase.auth().signInAnonymously();
+  };
+
+  const navigateToNextScreen = () => {
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        const { hostname, path, queryParams } = Linking.parse(url);
+
+        if (hostname === "tour") {
+          navigateToTourUseCase(navigation, queryParams.tourId, true);
+        }
+      } else {
         navigation.replace("Home");
       }
     });
-  
-    firebase.auth().signInAnonymously();
   };
 
   const signInSilenty = async () => {
