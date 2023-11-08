@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, Pressable, Modal } from "react-native";
-import { getCitiesUseCase } from "../useCases/getCitiesUseCase";
+import { getCitiesUseCase } from "../../useCases/getCitiesUseCase";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
 

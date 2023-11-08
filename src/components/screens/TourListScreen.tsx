@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { TourList } from "../TourList";
 import SearchBox from "../SearchBox";
 import { getToursUseCase } from "../../useCases/getToursUseCase";
-import FilterModal from "../FilterModal";
+import FilterModal from "../modals/FilterModal";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import Spinner from "react-native-loading-spinner-overlay";

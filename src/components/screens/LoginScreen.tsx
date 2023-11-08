@@ -11,6 +11,7 @@ import messaging from "@react-native-firebase/messaging";
 import { loginUseCase } from "../../useCases/login/loginUseCase";
 import { storeToken } from "../../useCases/login/storeToken";
 import { firebase } from "@react-native-firebase/auth";
+import { requestUserPermissionUseCase } from "../../useCases/commons/requestNotificationPermissionUseCase";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -60,6 +61,7 @@ export default function LoginScreen() {
   };
 
   const commonLogin = async (userInfo) => {
+    requestUserPermissionUseCase()
     await sendToken(userInfo.user.email);
     firebase.auth().onAuthStateChanged(async function (user) {
       if (user) {

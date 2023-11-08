@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Share } from "react-native";
 import { TourDetail } from "../TourDetail";
 import Toast from "react-native-toast-message";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -15,6 +15,7 @@ import { addCalendarEvent } from "../../useCases/utils";
 import Icon from "react-native-vector-icons/FontAwesome";
 import moment from "moment";
 import * as Calendar from "expo-calendar";
+import * as Linking from 'expo-linking';
 
 export default function TourScreen({ route, navigation }) {
   let tour = route.params.tour;
@@ -22,8 +23,7 @@ export default function TourScreen({ route, navigation }) {
   let reserveId = route.params.reserveId;
   let reserveState = route.params.reserveState;
   let reservedDate = route.params.reservedDate;
-  let reservedState = route.params.reservedState;
-  let isReserve = tourId != undefined;
+  let isReserve = route.params.isReserve;
 
   const [loading, setLoading] = useState(false);
   const [tourDetail, setTourDetail] = useState(tour);
@@ -130,36 +130,70 @@ export default function TourScreen({ route, navigation }) {
     await addCalendarEvent(config);
   };
 
+  const shareTour = async () => {
+    const redirectUrl = Linking.createURL('tour', {
+      queryParams: { tourId: tourDetail.id ? tourDetail.id : tourId },
+    });
+    `tiptour://tour?tourId=${tourDetail.id ? tourDetail.id : tourId}`
+    console.log("redirectUrl", redirectUrl);
+    await Share.share({
+      message: `Comparte este tour con tus amigos: ${redirectUrl}`
+    });
+  };
+
+  const setupReserveHeaderRight = () => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={() => {
+            addEvent();
+          }}
+          style={styles.icon}
+        >
+          <Icon name="calendar" size={25} color="#4E598C" />
+        </Pressable>
+      ),
+    });
+  }
+
+  const setupTourHeaderRight = () => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={() => {
+            shareTour();
+          }}
+          style={styles.icon}
+        >
+          <Icon name="share" size={25} color="#4E598C" />
+        </Pressable>
+      ),
+    });
+  } 
+
   React.useEffect(() => {
-    if (isReserve && reserveState == "abierto") {
-      navigation.setOptions({
-        headerRight: () => (
-          <Pressable
-            onPress={() => {
-              addEvent();
-            }}
-            style={styles.icon}
-          >
-            <Icon name="calendar" size={25} color="#4E598C" />
-          </Pressable>
-        ),
-      });
+    if (isReserve) {
+      if(reserveState == "abierto") {
+        setupReserveHeaderRight()
+      }
+    } else {
+        setupTourHeaderRight()
     }
   }, [navigation]);
 
   useFocusEffect(
     React.useCallback(() => {
-      if (!isReserve) {
+      if (tour != undefined) {
         return;
       }
 
-      console.log("getting tour detail for reserve with tourId", tourId);
+      console.log("Getting tour detail for reserve with tourId", tourId);
       setLoading(true);
       getTourUseCase(tourId)
         .then((data) => {
           setTourDetail(data);
           setLoading(false);
-          console.log("getting tour detail successfully", tourId);
+          console.log("Getting tour detail successfully", tourId);
         })
         .catch((err) => {
           console.log(err);
@@ -182,7 +216,6 @@ export default function TourScreen({ route, navigation }) {
           reserveState={reserveState}
           isReserve={isReserve}
           reservedDate={reservedDate}
-          reservedState={reservedState}
           handleBooking={handleBooking}
           handleCancelBooking={handleCancelBooking}
           handleReviewPosting={handleReviewPosting}
