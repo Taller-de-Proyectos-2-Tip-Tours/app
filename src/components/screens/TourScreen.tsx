@@ -11,11 +11,9 @@ import {
   postReviewUseCase,
 } from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
-import { addCalendarEvent } from "../../useCases/utils";
 import Icon from "react-native-vector-icons/FontAwesome";
-import moment from "moment";
-import * as Calendar from "expo-calendar";
-import * as Linking from 'expo-linking';
+import { shareTourUseCase } from "../../useCases/sharing/shareTourUseCase";
+import { addEventUseCase } from "../../useCases/sharing/addEventUseCase";
 
 export default function TourScreen({ route, navigation }) {
   let tour = route.params.tour;
@@ -113,40 +111,12 @@ export default function TourScreen({ route, navigation }) {
       });
   };
 
-  const addEvent = async () => {
-    const startDate = moment(reservedDate);
-    const endDate = moment(reservedDate);
-    const [hours, minutes] = tourDetail.duration
-      .split(":")
-      .map((str) => parseInt(str, 10));
-    endDate.add(hours, "hours").add(minutes, "minutes");
-    let config = {
-      title: tourDetail.name,
-      startDate: startDate.toDate(),
-      endDate: endDate.toDate(),
-      location: tourDetail.meetingPoint,
-      alarms: [{ relativeOffset: -15, method: Calendar.AlarmMethod.DEFAULT }],
-    };
-    await addCalendarEvent(config);
-  };
-
-  const shareTour = async () => {
-    const redirectUrl = Linking.createURL('tour', {
-      queryParams: { tourId: tourDetail.id ? tourDetail.id : tourId },
-    });
-    `tiptour://tour?tourId=${tourDetail.id ? tourDetail.id : tourId}`
-    console.log("redirectUrl", redirectUrl);
-    await Share.share({
-      message: `Comparte este tour con tus amigos: ${redirectUrl}`
-    });
-  };
-
   const setupReserveHeaderRight = () => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
           onPress={() => {
-            addEvent();
+            addEventUseCase(tourDetail.name, reservedDate, tourDetail.duration);
           }}
           style={styles.icon}
         >
@@ -154,14 +124,14 @@ export default function TourScreen({ route, navigation }) {
         </Pressable>
       ),
     });
-  }
+  };
 
   const setupTourHeaderRight = () => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
           onPress={() => {
-            shareTour();
+            shareTourUseCase(tourDetail.id ? tourDetail.id : tourId);
           }}
           style={styles.icon}
         >
@@ -169,15 +139,15 @@ export default function TourScreen({ route, navigation }) {
         </Pressable>
       ),
     });
-  } 
+  };
 
   React.useEffect(() => {
     if (isReserve) {
-      if(reserveState == "abierto") {
-        setupReserveHeaderRight()
+      if (reserveState == "abierto") {
+        setupReserveHeaderRight();
       }
     } else {
-        setupTourHeaderRight()
+      setupTourHeaderRight();
     }
   }, [navigation]);
 

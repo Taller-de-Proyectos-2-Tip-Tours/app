@@ -63,6 +63,7 @@ export default function LoginScreen() {
   const commonLogin = async (userInfo) => {
     requestUserPermissionUseCase()
     await sendToken(userInfo.user.email);
+    console.log("Logging with firebase");
     firebase.auth().onAuthStateChanged(async function (user) {
       if (user) {
         let accessToken = await user.getIdToken();
@@ -71,6 +72,7 @@ export default function LoginScreen() {
         navigation.replace("Home");
       }
     });
+  
     firebase.auth().signInAnonymously();
   };
 
