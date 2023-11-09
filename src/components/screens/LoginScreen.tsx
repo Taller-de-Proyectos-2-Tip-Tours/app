@@ -83,10 +83,10 @@ export default function LoginScreen() {
     dynamicLinks()
       .getInitialLink().then((link) => {
       if (link) {
-        console.log("RInitial link was:", link.url);
+        console.log("Initial link was:", link.url);
         const { hostname, path, queryParams } = Linking.parse(link.url);
         let tourId = path.split("/").pop();
-        navigateToTourUseCase(navigation, queryParams.tourId, true)
+        navigateToTourUseCase(navigation, tourId, true)
       } else {
         navigation.replace("Home");
       }
