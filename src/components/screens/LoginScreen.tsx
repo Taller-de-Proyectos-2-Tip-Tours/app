@@ -1,7 +1,6 @@
 // HomeScreen.js
 import React, { useEffect } from "react";
 import { StyleSheet, View, Text, ImageBackground } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -11,6 +10,11 @@ import messaging from "@react-native-firebase/messaging";
 import { loginUseCase } from "../../useCases/login/loginUseCase";
 import { storeToken } from "../../useCases/login/storeToken";
 import { firebase } from "@react-native-firebase/auth";
+import { requestUserPermissionUseCase } from "../../useCases/commons/requestNotificationPermissionUseCase";
+import { navigateToTourUseCase } from "../navigation/navigateToTourUseCase";
+import dynamicLinks from '@react-native-firebase/dynamic-links';
+import { useNavigation } from "@react-navigation/native";
+import * as Linking from "expo-linking";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -60,16 +64,33 @@ export default function LoginScreen() {
   };
 
   const commonLogin = async (userInfo) => {
-    await sendToken(userInfo.user.email);
+    requestUserPermissionUseCase();
+    //await sendToken(userInfo.user.email);
+    console.log("Logging with firebase");
     firebase.auth().onAuthStateChanged(async function (user) {
       if (user) {
         let accessToken = await user.getIdToken();
         await storeToken(accessToken);
         showLoginSuccess(userInfo.user.name);
+        navigateToNextScreen();
+      }
+    });
+
+    firebase.auth().signInAnonymously();
+  };
+
+  const navigateToNextScreen = () => {
+    dynamicLinks()
+      .getInitialLink().then((link) => {
+      if (link) {
+        console.log("Initial link was:", link.url);
+        const { hostname, path, queryParams } = Linking.parse(link.url);
+        let tourId = path.split("/").pop();
+        navigateToTourUseCase(navigation, tourId, true)
+      } else {
         navigation.replace("Home");
       }
     });
-    firebase.auth().signInAnonymously();
   };
 
   const signInSilenty = async () => {

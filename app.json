@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "tiptour",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -31,7 +32,20 @@
         "googleMaps":{
           "apiKey":"AIzaSyDQnAOJ7ApWXiIfaU2E3N1JGLWloXM2Pqo"
         }
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "codecrafter.page.link"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,6 +53,8 @@
     "plugins": [
       "@react-native-google-signin/google-signin",
       "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/dynamic-links",
       [
         "expo-calendar",
         {

@@ -17,7 +17,7 @@ import CheckboxDropdown from "./CheckboxDropdown";
 import { PhotoCarousel } from "./PhotoCarousel";
 import  CommentItem from './CommentItem';
 import Icon from "react-native-vector-icons/FontAwesome";
-import CommentsModal from "./CommentsModal";
+import CommentsModal from "./modals/CommentsModal";
 
 const { width } = Dimensions.get("window");
 
