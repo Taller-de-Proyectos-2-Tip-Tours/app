@@ -15,6 +15,7 @@ import {
 } from "./src/components/navigation/StackReserveNavigator";
 import * as Linking from "expo-linking";
 import { navigateToTourUseCase } from "./src/components/navigation/navigateToTourUseCase";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
 
 setupLogsUseCase();
 
@@ -83,20 +84,17 @@ export default function App() {
   const navigationRef = createNavigationContainerRef();
 
   useEffect(() => {
-    const handleDeepLink = async ({ url }: { url: string }) => {
+    const handleDeepLink = (link) => {
       // Handle the deep link URL here
       // You can use this URL to navigate or perform specific actions
-      console.log("Received deep link:", url);
-
-      const { hostname, path, queryParams } = Linking.parse(url);
-
-      if (hostname === "tour") {
-        navigateToTourUseCase(navigationRef, queryParams.tourId, false);
-      }
+      console.log("Received deep link:", link.url);
+      const { hostname, path, queryParams } = Linking.parse(link.url);
+      let tourId = path.split("/").pop();
+      navigateToTourUseCase(navigationRef, tourId, false);
     };
 
     // Add event listener for handling deep links
-    const linkingSubscription = Linking.addEventListener("url", handleDeepLink);
+    const linkingSubscription = dynamicLinks().onLink(handleDeepLink);
 
     // Messaging
     setupMessaginUseCase(navigationRef);
@@ -111,7 +109,7 @@ export default function App() {
     );
 
     return () => {
-      linkingSubscription.remove();
+      linkingSubscription();
       unsubscribeOnMessage();
     };
   }, []);
@@ -148,4 +146,3 @@ export default function App() {
   );
 }
 
-AppRegistry.registerComponent("app", () => App);

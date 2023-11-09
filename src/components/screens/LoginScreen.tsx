@@ -12,8 +12,9 @@ import { storeToken } from "../../useCases/login/storeToken";
 import { firebase } from "@react-native-firebase/auth";
 import { requestUserPermissionUseCase } from "../../useCases/commons/requestNotificationPermissionUseCase";
 import { navigateToTourUseCase } from "../navigation/navigateToTourUseCase";
-import * as Linking from "expo-linking";
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useNavigation } from "@react-navigation/native";
+import * as Linking from "expo-linking";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -64,7 +65,7 @@ export default function LoginScreen() {
 
   const commonLogin = async (userInfo) => {
     requestUserPermissionUseCase();
-    await sendToken(userInfo.user.email);
+    //await sendToken(userInfo.user.email);
     console.log("Logging with firebase");
     firebase.auth().onAuthStateChanged(async function (user) {
       if (user) {
@@ -79,13 +80,13 @@ export default function LoginScreen() {
   };
 
   const navigateToNextScreen = () => {
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        const { hostname, path, queryParams } = Linking.parse(url);
-
-        if (hostname === "tour") {
-          navigateToTourUseCase(navigation, queryParams.tourId, true);
-        }
+    dynamicLinks()
+      .getInitialLink().then((link) => {
+      if (link) {
+        console.log("RInitial link was:", link.url);
+        const { hostname, path, queryParams } = Linking.parse(link.url);
+        let tourId = path.split("/").pop();
+        navigateToTourUseCase(navigation, queryParams.tourId, true)
       } else {
         navigation.replace("Home");
       }
