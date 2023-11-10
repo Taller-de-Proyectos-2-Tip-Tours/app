@@ -1,4 +1,4 @@
-import { API_URL_TOURS, API_URL_REVIEWS } from "../service/Const";
+import { API_URL_TOURS } from "../service/Const";
 import {
   fetchDataFromApi,
 } from "../service/repositories/toursRespository";
@@ -11,17 +11,6 @@ export const getToursUseCase = async (filters) => {
      
     // Mapeamos sobre los datos y llamamos a una función para obtener los comentarios
      const toursWithComments = await Promise.all(data.map(async (item) => {
-      // Aquí puedes llamar a una función para obtener los comentarios de cada tour
-      let totalRatings = 0;
-      let totalRatingValue = 0;
-      let activeFilter = { state: "active" };
-      const comments = await fetchDataFromApi(API_URL_REVIEWS+ `/${item._id.$oid}`, { ...activeFilter });
-      comments.forEach((comment) => {
-        totalRatings++;
-        totalRatingValue += comment.stars; 
-      });
-      const averageRating = totalRatings > 0 ? totalRatingValue / totalRatings : 0;
-  
       return {
         id: item._id.$oid,
         name: item.name,
@@ -32,8 +21,6 @@ export const getToursUseCase = async (filters) => {
         city: item.city,
         language: item.language ? item.language : "Español",
         guideName: "Juan Perez",
-        numRatings: totalRatings,
-        averageRating: averageRating,
         availableDates:
           item.dates?.map((bookings) => ({
             people: item.maxParticipants - bookings.people,
@@ -44,7 +31,6 @@ export const getToursUseCase = async (filters) => {
         extraPhotos: item.otherImages,
         meetingPointDescription: item.meetingPoint,
         stops: item.stops,
-        comments: comments,
       };
     }));
 
@@ -54,48 +40,3 @@ export const getToursUseCase = async (filters) => {
     throw error;
   }
 };
-
-export const getTourUseCase = async (id) => {
-  try {
-    let totalRatings = 0;
-    let totalRatingValue = 0;
-    console.log(`Executing getTourUseCase with id: ${id})}`);
-    const item = await fetchDataFromApi(API_URL_TOURS + `/${id}`, undefined);
-    let activeFilter = { state: "active" };
-    const comments = await fetchDataFromApi(API_URL_REVIEWS+ `/${id}`, { ...activeFilter });
-    comments.forEach((comment) => {
-      totalRatings++;
-      totalRatingValue += comment.stars; 
-    });
-    const averageRating = totalRatings > 0 ? totalRatingValue / totalRatings : 0;
-
-    return {
-      id: item._id.$oid,
-      name: item.name,
-      duration: item.duration,
-      description: item.description,
-      considerations: item.considerations,
-      maxCapacity: item.maxParticipants,
-      city: item.city,
-      language: item.language ? item.language : "Español",
-      guideName: "Juan Perez",
-      numRatings: totalRatings,
-      averageRating: averageRating,
-      availableDates:
-        item.dates?.map((bookings) => ({
-          people: item.maxParticipants - bookings.people,
-          state: bookings.state,
-          date: bookings.date,
-        })) || [],
-      mainPhoto: item.mainImage,
-      extraPhotos: item.otherImages,
-      meetingPointDescription: item.meetingPoint,
-      stops: item.stops,
-      comments: comments
-    };
-  } catch (error) {
-    console.log(`Error on getToursUseCase ${error}`);
-    throw error;
-  }
-};
-

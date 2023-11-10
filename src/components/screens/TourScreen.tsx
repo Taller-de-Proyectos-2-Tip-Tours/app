@@ -4,16 +4,15 @@ import { TourDetail } from "../TourDetail";
 import Toast from "react-native-toast-message";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useFocusEffect } from "@react-navigation/native";
-import { getTourUseCase } from "../../useCases/getToursUseCase";
+import { getTourUseCase } from "../../useCases/getTourUseCase";
 import { cancelBookingUseCase } from "../../useCases/cancelBookingUseCase";
-import {
-  postBookingUseCase,
-  postReviewUseCase,
-} from "../../useCases/postBookingUseCase";
+import { postBookingUseCase } from "../../useCases/postBookingUseCase";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { shareTourUseCase } from "../../useCases/sharing/shareTourUseCase";
 import { addEventUseCase } from "../../useCases/sharing/addEventUseCase";
+import { postReviewUseCase } from "../../useCases/reviews/postReviewUseCase";
+import { getReviewsUseCase } from "../../useCases/reviews/getReviewsUseCase";
 
 export default function TourScreen({ route, navigation }) {
   let tour = route.params.tour;
@@ -23,7 +22,7 @@ export default function TourScreen({ route, navigation }) {
   let reservedDate = route.params.reservedDate;
   let isReserve = route.params.isReserve;
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [tourDetail, setTourDetail] = useState(tour);
 
   const showBookingSuccess = (message) => {
@@ -89,9 +88,10 @@ export default function TourScreen({ route, navigation }) {
       userEmail: currentUser.user.email,
       userName: currentUser.user.name,
     };
-    const today = new Date();
+    setLoading(true);
     postReviewUseCase(tourDetail.id, body)
       .then((data) => {
+        const today = new Date();
         let reviews = tourDetail.comments;
         const newComment = {
           _id: { $oid: "1" }, // Estructura correcta para el objeto _id.$oid
@@ -103,10 +103,12 @@ export default function TourScreen({ route, navigation }) {
         reviews.push(newComment);
         console.log("reviews", reviews);
         let newDetail = { comments: reviews, ...tourDetail };
+        setLoading(false);
         setTourDetail(newDetail);
         showBookingSuccess(`Tu comentario se recibió correctamente`);
       })
       .catch((err) => {
+        setLoading(false);
         showBookingError(err.message);
       });
   };
@@ -151,9 +153,19 @@ export default function TourScreen({ route, navigation }) {
     }
   }, [navigation]);
 
+  const getReviews = async (tourDetail) => {
+    await getReviewsUseCase(tourDetail, tourDetail.id).then((data) => {
+      setTourDetail(data);
+      setLoading(false);
+    }).catch((err) => {
+      console.log(err);
+      setLoading(false);
+    });
+  }
   useFocusEffect(
     React.useCallback(() => {
       if (tour != undefined) {
+        getReviews(tour)
         return;
       }
 
@@ -161,8 +173,7 @@ export default function TourScreen({ route, navigation }) {
       setLoading(true);
       getTourUseCase(tourId)
         .then((data) => {
-          setTourDetail(data);
-          setLoading(false);
+          getReviews(data)
           console.log("Getting tour detail successfully", tourId);
         })
         .catch((err) => {

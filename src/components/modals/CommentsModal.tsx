@@ -21,7 +21,7 @@ const CommentsModal = ({ isVisible, onDismiss, onSelect }) => {
   };
 
   useEffect(() => {
-    setButtonEnabled(comment.length > 0 || rating > 0);
+    setButtonEnabled(comment.length > 0 && rating > 0);
   }, [comment, rating]);
 
   return (
