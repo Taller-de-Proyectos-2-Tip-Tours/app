@@ -117,7 +117,7 @@ export default function TourScreen({ route, navigation }) {
       headerRight: () => (
         <Pressable
           onPress={() => {
-            addEventUseCase(tourDetail.name, reservedDate, tourDetail.duration);
+            addEventUseCase(tourDetail.name, reservedDate, tourDetail.duration, tourDetail.meetingPoint);
           }}
           style={styles.icon}
         >
@@ -150,7 +150,7 @@ export default function TourScreen({ route, navigation }) {
     } else {
       setupTourHeaderRight();
     }
-  }, [navigation]);
+  }, [navigation, tourDetail]);
 
   const getReviews = async (tourDetail) => {
     await getReviewsUseCase(tourDetail, tourDetail.id).then((data) => {

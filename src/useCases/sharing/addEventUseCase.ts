@@ -49,7 +49,7 @@ const addCalendarEvent = async (config) => {
   });
 };
 
-export const addEventUseCase = async (name, reservedDate, duration) => {
+export const addEventUseCase = async (name, reservedDate, duration, meetingPoint) => {
   const startDate = moment(reservedDate);
   const endDate = moment(reservedDate);
   const [hours, minutes] = duration.split(":").map((str) => parseInt(str, 10));
@@ -58,7 +58,7 @@ export const addEventUseCase = async (name, reservedDate, duration) => {
     title: name,
     startDate: startDate.toDate(),
     endDate: endDate.toDate(),
-    location: tourDetail.meetingPoint,
+    location: meetingPoint,
     alarms: [{ relativeOffset: -15, method: Calendar.AlarmMethod.DEFAULT }],
   };
   await addCalendarEvent(config);
