@@ -9,7 +9,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { transformDateToString } from "../useCases/utils";
 import ReserveListContainer from "./ReserveListContainer";
-import {getTourBasicUseCase } from "../useCases/getToursUseCase"
+import { getTourBasicUseCase } from "../useCases/getTourBasicUseCase";
 
 export const ReserveList = ({ style, tours }) => {
   const sortedTours = [...tours]; 

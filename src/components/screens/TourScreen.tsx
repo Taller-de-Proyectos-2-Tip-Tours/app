@@ -93,7 +93,7 @@ export default function TourScreen({ route, navigation }) {
         const today = new Date();
         let reviews = tourDetail.comments;
         const newComment = {
-          _id: { $oid: "1" }, // Estructura correcta para el objeto _id.$oid
+          id: reviews.lenght + 1, // Estructura correcta para el objeto _id.$oid
           userName: currentUser.user.name,
           comment: review.comment,
           stars: review.rating,
