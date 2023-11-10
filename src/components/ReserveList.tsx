@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
@@ -12,13 +10,13 @@ import ReserveListContainer from "./ReserveListContainer";
 import { getTourBasicUseCase } from "../useCases/getTourBasicUseCase";
 
 export const ReserveList = ({ style, tours }) => {
-  const sortedTours = [...tours]; 
+  const sortedTours = [...tours];
   sortedTours.sort((a, b) => {
     if (a.state < b.state) return -1;
     if (a.state > b.state) return 1;
     if (a.date > b.date) return -1;
     if (a.date < b.date) return 1;
-    return 0; 
+    return 0;
   });
   return (
     <View style={[style]}>
@@ -31,12 +29,10 @@ export const ReserveList = ({ style, tours }) => {
   );
 };
 
-
-
 const ReserveListRow = (props) => {
   const navigation = useNavigation();
   const { id, tourId, date, people, name, state } = props.data;
-  
+
   const [tourImage, setTourImage] = useState(null);
 
   useEffect(() => {
@@ -50,44 +46,23 @@ const ReserveListRow = (props) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("ReserveDetail", { tourId: tourId, reservedDate: date, reserveId: id, reserveState: state, isReserve: true})}
+      onPress={() =>
+        navigation.navigate("ReserveDetail", {
+          tourId: tourId,
+          reservedDate: date,
+          reserveId: id,
+          reserveState: state,
+          isReserve: true,
+        })
+      }
     >
-      
       <ReserveListContainer
-        name= {name}
-        date= {transformDateToString(date)}
+        name={name}
+        date={transformDateToString(date)}
         people={people}
-        state= {state}
+        state={state}
         tourImage={tourImage}
       />
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    padding: 16,
-  },
-  row: {
-    flexDirection: "row",
-  },
-  columns: {
-    flexDirection: "column",
-    width: "80%",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#004E98",
-  },
-  body: {
-    color: "#333333",
-  },
-  divider: {
-    marginTop: 10,
-    height: 1,
-    backgroundColor: "#ccc",
-  },
-});
