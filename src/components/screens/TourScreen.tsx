@@ -91,22 +91,6 @@ export default function TourScreen({ route, navigation }) {
     };
     const today = new Date();
     postReviewUseCase(tourDetail.id, body)
-<<<<<<< HEAD
-      .then((data) => {
-        let reviews = tourDetail.comments;
-        const newComment = {
-          _id: { $oid: "1" }, // Estructura correcta para el objeto _id.$oid
-          userName: currentUser.user.name,
-          comment: review.comment,
-          stars: review.rating,
-          date: today,
-        };
-        reviews.push(newComment);
-        console.log("reviews", reviews);
-        let newDetail = { comments: reviews, ...tourDetail };
-        setTourDetail(newDetail);
-        showBookingSuccess(`Tu comentario se recibió correctamente`);
-=======
        .then((data) => {
         //  let reviews = tourDetail.comments;
         //  const newComment = {
@@ -131,7 +115,6 @@ export default function TourScreen({ route, navigation }) {
           setLoading(false);
           showBookingSuccess(`Tu comentario se recibió correctamente`);
         });
->>>>>>> feature/bugs_sp4
       })
       .catch((err) => {
         showBookingError(err.message);
