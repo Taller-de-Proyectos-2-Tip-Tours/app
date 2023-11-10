@@ -53,6 +53,7 @@ const handleRemoteMessage = (navigationRef, remoteMessage) => {
         reservedDate: date,
         reserveId: reserveId,
         reserveState: state,
+        isReserve: true
       },
     },
   });

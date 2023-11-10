@@ -71,7 +71,6 @@ export default function TourScreen({ route, navigation }) {
     cancelBookingUseCase(reserveId)
       .then((data) => {
         showBookingSuccess(`Se canceló la reserva correctamente`);
-
         navigation.goBack();
         navigation.navigate("TourList");
       })
