@@ -15,6 +15,7 @@ import { navigateToTourUseCase } from "../navigation/navigateToTourUseCase";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
 import * as Linking from "expo-linking";
+import { getToken } from "../../useCases/login/getToken";
 import { fetchNotificationHistoryUseCase } from "../../useCases/notification/fetchNotificationHistoryUseCase";
 import { navigateToReseverUseCase } from "../navigation/navigateToReseverUseCase";
 import { storeNotificationHistoryUseCase } from "../../useCases/notification/storeNotificationHistoryUseCase";
@@ -57,7 +58,9 @@ export default function LoginScreen() {
     try {
       await GoogleSignin.hasPlayServices();
       let userSigned = await GoogleSignin.isSignedIn();
-      if (!userSigned) {
+      console.log("Probando",userSigned);
+      let token = await getToken()
+      if (!userSigned || token === 'admin') {
         const userInfo = await GoogleSignin.signIn();
         commonLogin(userInfo);
       }

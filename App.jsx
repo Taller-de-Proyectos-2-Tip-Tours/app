@@ -104,7 +104,7 @@ export default function App() {
       />
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen
+         <Stack.Screen
             name="Login"
             options={{
               title: "Tip Tours",
@@ -114,7 +114,7 @@ export default function App() {
               headerTintColor: "#fff",
             }}
             component={LoginScreen}
-          />
+          /> 
           <Stack.Screen
             name="Home"
             options={{ headerShown: false }}
