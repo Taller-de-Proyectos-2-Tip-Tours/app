@@ -5,6 +5,7 @@ import LoginScreen from "./src/components/screens/LoginScreen";
 import { AppRegistry, StatusBar } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import Toast, { BaseToast } from "react-native-toast-message";
+import * as Notifications from 'expo-notifications';
 import { createNavigationContainerRef } from "@react-navigation/native";
 import messaging from "@react-native-firebase/messaging";
 import { storeNotificationHistoryUseCase } from "./src/useCases/notification/storeNotificationHistoryUseCase";
@@ -16,6 +17,7 @@ import {
 import * as Linking from "expo-linking";
 import { navigateToTourUseCase } from "./src/components/navigation/navigateToTourUseCase";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
+import { navigateToReseverUseCase } from "./src/components/navigation/navigateToReseverUseCase";
 
 setupLogsUseCase();
 
@@ -38,24 +40,13 @@ const toastConfig = {
 };
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  storeNotificationHistoryUseCase(remoteMessage);
+  storeNotificationHistoryUseCase({...remoteMessage, handled: false});
   console.log("Message handled in the background!", remoteMessage);
 });
 
 const handleRemoteMessage = (navigationRef, remoteMessage) => {
-  const { tourId, date, reserveId, state } = remoteMessage.data;
-  navigationRef.navigate("Home", {
-    screen: "bookingTab",
-    params: {
-      screen: "ReserveDetail",
-      params: {
-        tourId: tourId,
-        reservedDate: date,
-        reserveId: reserveId,
-        reserveState: state,
-      },
-    },
-  });
+  console.log("handleRemoteMessage", remoteMessage);
+  navigateToReseverUseCase(navigationRef, remoteMessage.data);
 };
 
 const setupMessaginUseCase = (navigationRef) => {
@@ -67,17 +58,7 @@ const setupMessaginUseCase = (navigationRef) => {
     handleRemoteMessage(navigationRef, remoteMessage);
   });
 
-  messaging()
-    .getInitialNotification()
-    .then((remoteMessage) => {
-      if (remoteMessage) {
-        console.log(
-          "Notification caused app to open from quit state:",
-          JSON.stringify(remoteMessage)
-        );
-        handleRemoteMessage(navigationRef, remoteMessage);
-      }
-    });
+
 };
 
 export default function App() {

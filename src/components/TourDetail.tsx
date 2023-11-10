@@ -88,11 +88,6 @@ export const TourDetail = (props) => {
     textAlign: 'center', 
   };
 
-  tourDetail.comments = tourDetail.comments.map((comment) => ({
-    ...comment,
-    date: new Date(comment.date), // Supongamos que "date" contiene las fechas en formato válido para Date
-    }));
-
   return (
     <View style={styles.columns}>
       <ScrollView style={styles.scrollView}>
@@ -148,7 +143,7 @@ export const TourDetail = (props) => {
             </>
           ) : (
             <>
-              <Text style={{...styles.label3, marginTop: 10 }}>
+              <Text style={{ ...styles.label3, marginTop: 10 }}>
                 Fecha y hora seleccionada {"\n"}{" "}
                 {reserveDate ? transformDateToString(reservedDate) : ""}
               </Text>
@@ -156,9 +151,11 @@ export const TourDetail = (props) => {
                 Estado: {"\n"}{" "}
                 {reserveState}
               </Text> */}
-               {reserveState && (
-                <Text style={[styles.label3, stateStyle]}>{reserveState.toUpperCase()}</Text>
-                )}
+              {reserveState && (
+                <Text style={[styles.label3, stateStyle]}>
+                  {reserveState.toUpperCase()}
+                </Text>
+              )}
             </>
           )}
         </View>
@@ -178,35 +175,36 @@ export const TourDetail = (props) => {
         </View>
         {
           //reserveState != "finalizado" &&
-          (reserveState != "finalizado" && reserveState != "cancelado") &&
-          <Pressable
-          key={9}
-          style={[
-            styles.toggleButton,
-            {
-              backgroundColor: isButtonEnabled() ? "#4E598C" : "#A9A9A9",
-            },
-          ]}
-          onPress={() => {
-            if (reserveDate) {
-              // Verifica si reserveDate tiene un valor
-              if (isReserve) {
-                if (!isReserveButtonDisabled())
-                  handleCancelBooking(reserveDate.date);
-              } else {
-                handleBooking(reserveDate.date, participants);
-              }
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>
-            {isReserve && reserveState == "abierto"
-              ? "Cancelar reserva"
-              : "Reservar"}
-          </Text>
-        </Pressable>
+          reserveState != "finalizado" && reserveState != "cancelado" && (
+            <Pressable
+              key={9}
+              style={[
+                styles.toggleButton,
+                {
+                  backgroundColor: isButtonEnabled() ? "#4E598C" : "#A9A9A9",
+                },
+              ]}
+              onPress={() => {
+                if (reserveDate) {
+                  // Verifica si reserveDate tiene un valor
+                  if (isReserve) {
+                    if (!isReserveButtonDisabled())
+                      handleCancelBooking(reserveDate.date);
+                  } else {
+                    handleBooking(reserveDate.date, participants);
+                  }
+                }
+              }}
+            >
+              <Text style={styles.buttonText}>
+                {isReserve && reserveState == "abierto"
+                  ? "Cancelar reserva"
+                  : "Reservar"}
+              </Text>
+            </Pressable>
+          )
         }
-        
+
         <>
           {isReserveButtonDisabled() && reserveState == "abierto" && (
             <Text
@@ -221,7 +219,7 @@ export const TourDetail = (props) => {
             </Text>
           )}
         </>
-        { isReserve && reserveState == "finalizado" &&
+        {isReserve && reserveState == "finalizado" && (
           <>
             <Pressable
               key={26}
@@ -239,7 +237,7 @@ export const TourDetail = (props) => {
               onSelect={handleReviewPosting}
             />
           </>
-        }
+        )}
 
         <View key={10} style={styles.ratingContainer}>
           <Text style={styles.label}>{tourDetail.numRatings} valoraciones</Text>
@@ -273,13 +271,15 @@ export const TourDetail = (props) => {
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
-
-        <FlatList
-         data={tourDetail.comments.sort((a, b) => b.date - a.date)}
-         style={{ marginVertical: 10 }}
-         renderItem={({ item }) => <CommentItem item={item} />}
-         keyExtractor={(item) => item._id.$oid}  
-        />
+        <View key={15} style={{ marginVertical: 10 }}>
+          {tourDetail.comments?.length == 0 ? (
+            <Text style={{ marginVertical: 10 }}>No hay comentarios</Text>
+          ) : (
+            tourDetail.comments
+            .sort((a, b) => b.date - a.date)
+            .map((comment) => <CommentItem item={comment} key={comment.id} />)
+          )}
+        </View>
       </ScrollView>
     </View>
   );

@@ -7,6 +7,7 @@ import FilterModal from "../modals/FilterModal";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import Spinner from "react-native-loading-spinner-overlay";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function TourListScreen() {
   const navigation = useNavigation();
@@ -80,7 +81,14 @@ export default function TourListScreen() {
       ) : error ? (
         <Text>Error: {error}</Text>
       ) : data.length == 0 ? (
-        <Text>No hay paseos disponibles</Text>
+        <View style={styles.emptyStateContainer}>
+          <Image
+            style={styles.thumbailEmptyState}
+            source={require("../../../assets/leaf.png")}
+          />
+          <Text>No hay paseos disponibles</Text>
+        </View>
+        
       ) : (
         <TourList style={{ flex: 3 }} tours={data} />
       )}
@@ -98,5 +106,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     margin: 16,
     zIndex: 1000,
+  },
+  thumbailEmptyState: {
+    width: 150,
+    height: 150,
+  },
+  emptyStateContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
