@@ -35,6 +35,7 @@ const NotificationHistoryScreen = () => {
             reservedDate: date,
             reserveId: id,
             reserveState: state,
+            isReserve: true,
           },
         });
       }}

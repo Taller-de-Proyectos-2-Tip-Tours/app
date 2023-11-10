@@ -12,9 +12,13 @@ import { storeToken } from "../../useCases/login/storeToken";
 import { firebase } from "@react-native-firebase/auth";
 import { requestUserPermissionUseCase } from "../../useCases/commons/requestNotificationPermissionUseCase";
 import { navigateToTourUseCase } from "../navigation/navigateToTourUseCase";
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+import dynamicLinks from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
 import * as Linking from "expo-linking";
+import { fetchNotificationHistoryUseCase } from "../../useCases/notification/fetchNotificationHistoryUseCase";
+import { navigateToReseverUseCase } from "../navigation/navigateToReseverUseCase";
+import { storeNotificationHistoryUseCase } from "../../useCases/notification/storeNotificationHistoryUseCase";
+import { storeFullNotificationHistoryUseCase } from "../../useCases/notification/storeFullNotificationHistoryUseCase";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -65,32 +69,52 @@ export default function LoginScreen() {
 
   const commonLogin = async (userInfo) => {
     requestUserPermissionUseCase();
-    //await sendToken(userInfo.user.email);
+    await sendToken(userInfo.user.email);
+    var navigated = false
     console.log("Logging with firebase");
     firebase.auth().onAuthStateChanged(async function (user) {
-      if (user) {
+      if (user && !navigated) {
+        navigated = true
         let accessToken = await user.getIdToken();
         await storeToken(accessToken);
         showLoginSuccess(userInfo.user.name);
         navigateToNextScreen();
       }
     });
-
     firebase.auth().signInAnonymously();
   };
 
   const navigateToNextScreen = () => {
-    dynamicLinks()
-      .getInitialLink().then((link) => {
-      if (link) {
-        console.log("Initial link was:", link.url);
-        const { hostname, path, queryParams } = Linking.parse(link.url);
-        let tourId = path.split("/").pop();
-        navigateToTourUseCase(navigation, tourId, true)
-      } else {
-        navigation.replace("Home");
-      }
-    });
+    fetchNotificationHistoryUseCase()
+      .then((data) => {
+        let handledData = data.map((item) => ({
+          ...item,
+          handled: true,
+        }));
+        let unhandledData = data.find((item) => !item.handled);
+        storeFullNotificationHistoryUseCase(handledData);
+        console.log(`Unhandled data ${JSON.stringify(unhandledData)}`);
+        if (unhandledData) {
+          console.log("Naviagtion from notifcation");
+          navigateToReseverUseCase(navigation, unhandledData.data);
+        } else {
+          dynamicLinks()
+            .getInitialLink()
+            .then((link) => {
+              if (link) {
+                console.log("Initial link was:", link.url);
+                const { hostname, path, queryParams } = Linking.parse(link.url);
+                let tourId = path.split("/").pop();
+                navigateToTourUseCase(navigation, tourId, true);
+              } else {
+                navigation.replace("Home");
+              }
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(`Error fetching notification history ${error}`);
+      });
   };
 
   const signInSilenty = async () => {

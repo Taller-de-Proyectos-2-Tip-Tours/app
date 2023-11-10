@@ -5,7 +5,7 @@ import { ReserveList } from "../ReserveList";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useFocusEffect } from "@react-navigation/native";
 
-export default function ReservesScreen({}) {
+export default function ReservesScreen() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -6,6 +6,7 @@ export const fetchNotificationHistoryUseCase = async () => {
       if (storedNotifications) {
         return JSON.parse(storedNotifications);
       }
+      return [];
     } catch (error) {
       console.error('Error fetching notification history: ', error);
     }

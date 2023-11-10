@@ -38,13 +38,11 @@ function StackNavigator() {
           name="ReserveList"
           options={{ title: "Mis reservas" }}
           component={ReservesScreen}
-          getId={({ params }) => params.id}
         />
         <Stack.Screen
           name="ReserveDetail"
           options={{ title: "Detalle de la reserva" }}
           component={TourScreen}
-          getId={({ params }) => params.id}
         />
       </Stack.Navigator>
     );
