@@ -94,8 +94,25 @@ export const getTourUseCase = async (id) => {
       comments: comments
     };
   } catch (error) {
-    console.log(`Error on getToursUseCase ${error}`);
+    console.log(`Error on getTourUseCase ${error}`);
     throw error;
   }
 };
 
+export async function getTourBasicUseCase (id) {
+  try {
+    let totalRatings = 0;
+    let totalRatingValue = 0;
+    console.log(`Executing getBasicTourUseCase with id: ${id})}`);
+    const item = await fetchDataFromApi(API_URL_TOURS + `/${id}`, undefined);
+       
+    return {
+      id: item._id.$oid,
+      name: item.name,
+      mainImage: item.mainImage,
+    };
+  } catch (error) {
+    console.log(`Error on getBasicTourUseCase ${error}`);
+    throw error;
+  }
+};
