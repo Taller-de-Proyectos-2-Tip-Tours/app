@@ -98,7 +98,7 @@ export default function LoginScreen() {
         console.log(`Unhandled data ${JSON.stringify(unhandledData)}`);
         if (unhandledData) {
           console.log("Navigation from notifcation");
-          navigateToReseverUseCase(navigation, unhandledData.data);
+          navigateToReseverUseCase(navigation, unhandledData.data, true);
         } else {
           dynamicLinks()
             .getInitialLink()

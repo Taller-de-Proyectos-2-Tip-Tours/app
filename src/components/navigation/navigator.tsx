@@ -8,6 +8,8 @@ import ReservesScreen from "../screens/ReservesScreen";
 import NotificationHistoryScreen from "../screens/NotificationHistoryScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { HeaderBackButton } from "@react-navigation/elements";
+import { View } from "react-native";
 
 export const Stack = createStackNavigator();
 export const Tab = createBottomTabNavigator();
@@ -49,7 +51,20 @@ function StackReserveNavigator() {
       />
       <Stack.Screen
         name="ReserveDetail"
-        options={generateStyle("Detalle de la reserva")}
+        options={({ navigation }) => ({
+          ...generateStyle("Detalle de la reserva"),
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "ReserveList" }],
+                });
+              }}
+              tintColor="#fff"
+            />
+          ),
+        })}
         component={TourScreen}
       />
     </Stack.Navigator>

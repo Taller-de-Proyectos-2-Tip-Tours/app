@@ -1,6 +1,9 @@
-export const navigateToReseverUseCase = (navigationRef, data) => {
+export const navigateToReseverUseCase = (navigationRef, data, clearStack) => {
   const { tourId, date, reserveId, state } = data;
-  navigationRef.replace("Home");
+  if (clearStack) {
+    navigationRef.replace("Home");
+  }
+
   navigationRef.navigate("Home", {
     screen: "bookingTab",
     params: {

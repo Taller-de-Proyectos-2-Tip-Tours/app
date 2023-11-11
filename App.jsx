@@ -40,42 +40,34 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   console.log("Message handled in the background!", remoteMessage);
 });
 
-const handleRemoteMessage = (navigationRef, remoteMessage) => {
-  console.log("handleRemoteMessage", remoteMessage);
-  navigateToReseverUseCase(navigationRef, remoteMessage.data);
-};
-
-const setupMessaginUseCase = (navigationRef) => {
-  messaging().onNotificationOpenedApp((remoteMessage) => {
-    console.log(
-      "Message handled and opened the app",
-      JSON.stringify(remoteMessage)
-    );
-    handleRemoteMessage(navigationRef, remoteMessage);
-  });
-};
 
 export default function App() {
   const navigationRef = createNavigationContainerRef();
 
   useEffect(() => {
+    // Deeplinking
     const handleDeepLink = (link) => {
-      // Handle the deep link URL here
-      // You can use this URL to navigate or perform specific actions
       console.log("Received deep link:", link.url);
       const { hostname, path, queryParams } = Linking.parse(link.url);
       let tourId = path.split("/").pop();
       navigateToTourUseCase(navigationRef, tourId, false);
     };
 
-    // Add event listener for handling deep links
     const linkingSubscription = dynamicLinks().onLink(handleDeepLink);
 
     // Messaging
-    setupMessaginUseCase(navigationRef);
-    const unsubscribeOnMessage = messaging().onMessage(
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "Message handled and opened the app",
+        JSON.stringify(remoteMessage)
+      );
+      storeNotificationHistoryUseCase({ ...remoteMessage, handled: true });
+      navigateToReseverUseCase(navigationRef, remoteMessage.data, false);
+    });
+
+    const onMessageSubscription = messaging().onMessage(
       async (remoteMessage) => {
-        storeNotificationHistoryUseCase(remoteMessage);
+        storeNotificationHistoryUseCase({ ...remoteMessage, handled: true });
         console.log(
           "A new FCM message arrived!",
           JSON.stringify(remoteMessage)
@@ -85,7 +77,7 @@ export default function App() {
 
     return () => {
       linkingSubscription();
-      unsubscribeOnMessage();
+      onMessageSubscription();
     };
   }, []);
 
