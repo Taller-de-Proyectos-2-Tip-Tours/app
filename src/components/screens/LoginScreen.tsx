@@ -58,9 +58,8 @@ export default function LoginScreen() {
     try {
       await GoogleSignin.hasPlayServices();
       let userSigned = await GoogleSignin.isSignedIn();
-      console.log("Probando",userSigned);
-      let token = await getToken()
-      if (!userSigned || token === 'admin') {
+      let token = await getToken();
+      if (!userSigned || token === "admin") {
         const userInfo = await GoogleSignin.signIn();
         commonLogin(userInfo);
       }
@@ -73,11 +72,11 @@ export default function LoginScreen() {
   const commonLogin = async (userInfo) => {
     requestUserPermissionUseCase();
     await sendToken(userInfo.user.email);
-    var navigated = false
+    var navigated = false;
     console.log("Logging with firebase");
     firebase.auth().onAuthStateChanged(async function (user) {
       if (user && !navigated) {
-        navigated = true
+        navigated = true;
         let accessToken = await user.getIdToken();
         await storeToken(accessToken);
         showLoginSuccess(userInfo.user.name);
@@ -98,7 +97,7 @@ export default function LoginScreen() {
         storeFullNotificationHistoryUseCase(handledData);
         console.log(`Unhandled data ${JSON.stringify(unhandledData)}`);
         if (unhandledData) {
-          console.log("Naviagtion from notifcation");
+          console.log("Navigation from notifcation");
           navigateToReseverUseCase(navigation, unhandledData.data);
         } else {
           dynamicLinks()

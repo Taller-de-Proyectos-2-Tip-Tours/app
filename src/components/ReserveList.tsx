@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, ScrollView, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { transformDateToString } from "../useCases/utils";
 import ReserveListContainer from "./ReserveListContainer";
@@ -36,7 +32,6 @@ const ReserveListRow = (props) => {
   const [tourImage, setTourImage] = useState(null);
 
   useEffect(() => {
-    // Aquí obtén la imagen del tour utilizando getTourBasicUseCase por tourId y actualiza el estado con la imagen.
     getTourBasicUseCase(tourId).then((tourData) => {
       if (tourData && tourData.mainImage) {
         setTourImage(tourData.mainImage);

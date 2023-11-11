@@ -1,7 +1,6 @@
 import { API_URL_RESERVES } from "../service/Const";
 import { deleteDataToApi } from "../service/repositories/toursRespository";
 
-
 export const cancelBookingUseCase = async (id) => {
   try {
     console.log(`Executing cancelBookingUseCase with id: ${id}`);

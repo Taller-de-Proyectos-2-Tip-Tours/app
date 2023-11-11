@@ -1,7 +1,6 @@
 import { API_URL_TOURS } from "../service/Const";
 import { fetchDataFromApi } from "../service/repositories/toursRespository";
 
-
 export const getTourUseCase = async (id) => {
   try {
     console.log(`Executing getTourUseCase with id: ${id})}`);
@@ -17,11 +16,12 @@ export const getTourUseCase = async (id) => {
       city: item.city,
       language: item.language ? item.language : "Español",
       guideName: item.guide.name ? item.guide.name : "Juan Perez",
-      availableDates: item.dates?.map((bookings) => ({
-        people: item.maxParticipants - bookings.people,
-        state: bookings.state,
-        date: bookings.date,
-      })) || [],
+      availableDates:
+        item.dates?.map((bookings) => ({
+          people: item.maxParticipants - bookings.people,
+          state: bookings.state,
+          date: bookings.date,
+        })) || [],
       mainPhoto: item.mainImage,
       extraPhotos: item.otherImages,
       meetingPointDescription: item.meetingPoint,

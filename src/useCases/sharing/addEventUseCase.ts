@@ -3,7 +3,6 @@ import * as Calendar from "expo-calendar";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 
-
 const obtainCalendarPermission = async () => {
   const { status } = await Calendar.requestCalendarPermissionsAsync();
   if (status !== "granted") {
@@ -43,13 +42,18 @@ const addCalendarEvent = async (config) => {
     Toast.show({
       type: "success", // 'success', 'error', 'info', 'warning'
       position: "bottom", // 'top', 'bottom', 'center'
-      text1: "Evento agregado a tu calendario",
+      text1: "Evento agregado a tu calendario.",
       visibilityTime: 3000, // Duration in milliseconds
     });
   });
 };
 
-export const addEventUseCase = async (name, reservedDate, duration, meetingPoint) => {
+export const addEventUseCase = async (
+  name,
+  reservedDate,
+  duration,
+  meetingPoint
+) => {
   const startDate = moment(reservedDate);
   const endDate = moment(reservedDate);
   const [hours, minutes] = duration.split(":").map((str) => parseInt(str, 10));

@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { TourList } from "../TourList";
 import SearchBox from "../SearchBox";
 import { getToursUseCase } from "../../useCases/getToursUseCase";
 import FilterModal from "../modals/FilterModal";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import Spinner from "react-native-loading-spinner-overlay";
-import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function TourListScreen() {
-  const navigation = useNavigation();
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,21 +33,23 @@ export default function TourListScreen() {
     setIsFilterModalOpen(false);
   };
 
-  useFocusEffect(React.useCallback(() => {
-    setLoading(true);
-    let filters = { ...selectedCities, ...nameFilter };
-    getToursUseCase(filters)
-      .then((data) => {
-        setData(data);
-        setError(null);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setError("Hubo un error cargando los datos :(");
-        setLoading(false);
-      });
-  }, [selectedCities, nameFilter]));
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      let filters = { ...selectedCities, ...nameFilter };
+      getToursUseCase(filters)
+        .then((data) => {
+          setData(data);
+          setError(null);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setError("Hubo un error cargando los datos.");
+          setLoading(false);
+        });
+    }, [selectedCities, nameFilter])
+  );
 
   return (
     <View style={styles.container}>
@@ -88,7 +87,6 @@ export default function TourListScreen() {
           />
           <Text>No hay paseos disponibles</Text>
         </View>
-        
       ) : (
         <TourList style={{ flex: 3 }} tours={data} />
       )}

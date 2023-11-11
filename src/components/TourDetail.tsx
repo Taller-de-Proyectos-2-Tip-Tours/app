@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import {
   Dimensions,
-  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import StarRating from "react-native-star-rating-widget";
@@ -15,7 +14,7 @@ import { transformDateToString } from "../useCases/utils";
 import IntegerSelector from "./AmountSelector";
 import CheckboxDropdown from "./CheckboxDropdown";
 import { PhotoCarousel } from "./PhotoCarousel";
-import  CommentItem from './CommentItem';
+import CommentItem from "./CommentItem";
 import Icon from "react-native-vector-icons/FontAwesome";
 import CommentsModal from "./modals/CommentsModal";
 
@@ -71,21 +70,21 @@ export const TourDetail = (props) => {
   };
 
   const borderColors = {
-    abierto: 'green', 
-    cancelado: 'red',  
-    finalizado: 'blue',
+    abierto: "green",
+    cancelado: "red",
+    finalizado: "blue",
   };
 
-  const borderColor = borderColors[reservedState] || "#4E598C"; 
+  const borderColor = borderColors[reservedState] || "#4E598C";
 
   const stateStyle = {
     backgroundColor: borderColor,
-    color: 'white',
+    color: "white",
     padding: 4,
     borderRadius: 10, // Agrega bordes redondeados al cartel
     paddingHorizontal: 12, // Espacio entre el texto y el borde
     marginVertical: 10,
-    textAlign: 'center', 
+    textAlign: "center",
   };
 
   return (
@@ -276,8 +275,8 @@ export const TourDetail = (props) => {
             <Text style={{ marginVertical: 10 }}>No hay comentarios</Text>
           ) : (
             tourDetail.comments
-            .sort((a, b) => b.date - a.date)
-            .map((comment) => <CommentItem item={comment} key={comment.id} />)
+              .sort((a, b) => b.date - a.date)
+              .map((comment) => <CommentItem item={comment} key={comment.id} />)
           )}
         </View>
       </ScrollView>
