@@ -121,7 +121,7 @@ export default function TourScreen({ route, navigation }) {
           }}
           style={styles.icon}
         >
-          <Icon name="calendar" size={25} color="#4E598C" />
+          <Icon name="calendar" size={25} color="#fff" />
         </Pressable>
       ),
     });
@@ -136,7 +136,7 @@ export default function TourScreen({ route, navigation }) {
           }}
           style={styles.icon}
         >
-          <Icon name="share" size={25} color="#4E598C" />
+          <Icon name="share" size={25} color="#fff" />
         </Pressable>
       ),
     });

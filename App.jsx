@@ -2,18 +2,14 @@ import React from "react";
 import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "./src/components/screens/LoginScreen";
-import { AppRegistry, StatusBar } from "react-native";
+import { StatusBar } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import Toast, { BaseToast } from "react-native-toast-message";
-import * as Notifications from 'expo-notifications';
 import { createNavigationContainerRef } from "@react-navigation/native";
 import messaging from "@react-native-firebase/messaging";
 import { storeNotificationHistoryUseCase } from "./src/useCases/notification/storeNotificationHistoryUseCase";
 import { setupLogsUseCase } from "./src/useCases/commons/setupLogsUseCase";
-import {
-  Stack,
-  TabNavigator,
-} from "./src/components/navigation/StackReserveNavigator";
+import { Stack, TabNavigator } from "./src/components/navigation/navigator";
 import * as Linking from "expo-linking";
 import { navigateToTourUseCase } from "./src/components/navigation/navigateToTourUseCase";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
@@ -40,7 +36,7 @@ const toastConfig = {
 };
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  storeNotificationHistoryUseCase({...remoteMessage, handled: false});
+  storeNotificationHistoryUseCase({ ...remoteMessage, handled: false });
   console.log("Message handled in the background!", remoteMessage);
 });
 
@@ -57,8 +53,6 @@ const setupMessaginUseCase = (navigationRef) => {
     );
     handleRemoteMessage(navigationRef, remoteMessage);
   });
-
-
 };
 
 export default function App() {
@@ -104,7 +98,7 @@ export default function App() {
       />
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
-         <Stack.Screen
+          <Stack.Screen
             name="Login"
             options={{
               title: "Tip Tours",
@@ -114,7 +108,7 @@ export default function App() {
               headerTintColor: "#fff",
             }}
             component={LoginScreen}
-          /> 
+          />
           <Stack.Screen
             name="Home"
             options={{ headerShown: false }}
@@ -126,4 +120,3 @@ export default function App() {
     </>
   );
 }
-

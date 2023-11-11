@@ -1,11 +1,9 @@
-import { firebase } from "@react-native-firebase/auth";
 import {
   GoogleSignin,
-  statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { Button, Text, View, StyleSheet, Image, Pressable } from "react-native";
+import { Text, View, StyleSheet, Image, Pressable } from "react-native";
 
 export default function ProfileScreen({ route }) {
   const navigation = useNavigation();
@@ -37,7 +35,7 @@ export default function ProfileScreen({ route }) {
             <Text style={styles.label}>{user.email}</Text>
           </View>
           <Pressable style={styles.mainAction} onPress={signOut}>
-            <Text style={styles.mainActionText}>{"Cerrar sesion"}</Text>
+            <Text style={styles.mainActionText}>{"Cerrar sesión"}</Text>
           </Pressable>
         </View>
       ) : (
@@ -51,6 +49,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: 20,
+    backgroundColor: "white",
   },
   infoContainer: {
     flex: 1,
