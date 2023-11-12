@@ -90,21 +90,32 @@ export default function TourScreen({ route, navigation }) {
     setLoading(true);
     postReviewUseCase(tourDetail.id, body)
       .then((data) => {
-        const today = new Date();
-        let reviews = tourDetail.comments;
-        const newComment = {
-          id: reviews.lenght + 1, // Estructura correcta para el objeto _id.$oid
-          userName: currentUser.user.name,
-          comment: review.comment,
-          stars: review.rating,
-          date: today,
-        };
-        reviews.push(newComment);
-        console.log("reviews", reviews);
-        let newDetail = { comments: reviews, ...tourDetail };
-        setLoading(false);
-        setTourDetail(newDetail);
-        showBookingSuccess(`Tu comentario se recibió correctamente`);
+        // const today = new Date();
+        // let reviews = tourDetail.comments;
+        // const newComment = {
+        //   id: reviews.lenght + 1, // Estructura correcta para el objeto _id.$oid
+        //   userName: currentUser.user.name,
+        //   comment: review.comment,
+        //   stars: review.rating,
+        //   date: today,
+        // };
+        // reviews.push(newComment);
+        // console.log("reviews", reviews);
+        // let newDetail = { comments: reviews, ...tourDetail };
+        // setLoading(false);
+        // setTourDetail(newDetail);
+        // showBookingSuccess(`Tu comentario se recibió correctamente`);
+        getTourUseCase(tourDetail.id) 
+          .then((updatedTourDetail) => {
+            getReviews(updatedTourDetail)
+            setTourDetail(updatedTourDetail);
+            //setLoading(true);
+            showBookingSuccess(`Tu comentario se recibió correctamente`);
+          })
+          .catch((err) => {
+            setLoading(false);
+            showBookingError(err.message);
+          });
       })
       .catch((err) => {
         setLoading(false);
