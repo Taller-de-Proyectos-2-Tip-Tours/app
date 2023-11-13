@@ -102,7 +102,6 @@ export const TourDetail = (props) => {
           <Icon name="language" size={25} color="#4E598C" />
           <Text style={styles.label2}>{tourDetail.language}</Text>
         </View>
-
         <Text key={3} style={styles.title}>
           {tourDetail.name}
         </Text>
@@ -267,6 +266,13 @@ export const TourDetail = (props) => {
             ))}
           </MapView>
         </View>
+        <View key={2} style={styles.row2}>
+          <Icon name="warning" size={15} color="#4E598C" />
+          <Text > Puntos a tener en cuenta: </Text>
+        </View>
+        <Text key={4} style={styles.label}>
+          {tourDetail.considerations}
+        </Text>
         <Text key={14} style={styles.title}>
           Comentarios
         </Text>
@@ -316,6 +322,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
+    alignItems: "center",
+  },
+  row2: {
+    flexDirection: "row",
+    //justifyContent: "space-between",
     marginTop: 10,
     alignItems: "center",
   },
