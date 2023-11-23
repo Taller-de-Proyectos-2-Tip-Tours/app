@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { fetchNotificationHistoryUseCase } from "../../useCases/notification/fetchNotificationHistoryUseCase";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import moment from 'moment';
 
 const NotificationHistoryScreen = () => {
   const [notificationHistory, setNotificationHistory] = useState([]);
@@ -49,6 +50,7 @@ const NotificationHistoryScreen = () => {
           <View style={styles.columns}>
             <Text style={styles.title}>{item.notification.title}</Text>
             <Text style={styles.body}>{item.notification.body}</Text>
+            <Text style={styles.datestyle}>{"Fecha Notificación: " + moment(item.sentTime).format('DD/MM/YYYY HH:mm')}</Text>
           </View>
         </View>
         <View style={styles.divider} />
@@ -81,6 +83,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   containerItem: {
     flexDirection: "column",
@@ -93,6 +97,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+    zIndex: 1000,
   },
   columns: {
     flexDirection: "column",
@@ -101,10 +106,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    //marginBottom: 8,
     color: "#004E98",
   },
   body: {
+    color: "#333333",
+    fontWeight: "bold",
+  },
+  datestyle: {
     color: "#333333",
   },
   thumbail: {

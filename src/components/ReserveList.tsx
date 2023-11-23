@@ -10,8 +10,8 @@ export const ReserveList = ({ style, tours }) => {
   sortedTours.sort((a, b) => {
     if (a.state < b.state) return -1;
     if (a.state > b.state) return 1;
-    if (a.date > b.date) return -1;
-    if (a.date < b.date) return 1;
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
     return 0;
   });
   return (
