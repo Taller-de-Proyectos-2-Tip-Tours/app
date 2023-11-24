@@ -116,7 +116,7 @@ export const TourDetail = (props) => {
           <Icon name="clock-o" size={25} color="#4E598C" />
           <Text style={styles.label2}>{tourDetail.duration}</Text>
         </View>
-        <View key={8}>
+        <View key={6}>
           {!isReserve ? (
             <>
               <TouchableOpacity
@@ -157,7 +157,7 @@ export const TourDetail = (props) => {
             </>
           )}
         </View>
-        <View key={23}>
+        <View key={7}>
           {!isReserve ? (
             <>
               <Text>Cantidad de personas</Text>
@@ -175,7 +175,7 @@ export const TourDetail = (props) => {
           //reserveState != "finalizado" &&
           reserveState != "finalizado" && reserveState != "cancelado" && (
             <Pressable
-              key={9}
+              key={8}
               style={[
                 styles.toggleButton,
                 {
@@ -206,6 +206,7 @@ export const TourDetail = (props) => {
         <>
           {isReserveButtonDisabled() && reserveState == "abierto" && (
             <Text
+            key={9}
               style={[
                 styles.label3,
                 {
@@ -220,7 +221,7 @@ export const TourDetail = (props) => {
         {isReserve && reserveState == "finalizado" && (
           <>
             <Pressable
-              key={26}
+              key={10}
               style={styles.toggleButton}
               onPress={() => {
                 setIsCommentModalOpen(true);
@@ -237,7 +238,7 @@ export const TourDetail = (props) => {
           </>
         )}
 
-        <View key={10} style={styles.ratingContainer}>
+        <View key={11} style={styles.ratingContainer}>
           <Text style={styles.label}>{tourDetail.numRatings} valoraciones</Text>
           <StarRating
             rating={tourDetail.averageRating}
@@ -246,7 +247,7 @@ export const TourDetail = (props) => {
             starSize={35}
           />
         </View>
-        <View key={11}>
+        <View key={12}>
           <MapView
             style={styles.map}
             initialRegion={{
@@ -266,17 +267,17 @@ export const TourDetail = (props) => {
             ))}
           </MapView>
         </View>
-        <View key={2} style={styles.row2}>
+        <View key={13} style={styles.row2}>
           <Icon name="warning" size={15} color="#4E598C" />
           <Text > Puntos a tener en cuenta: </Text>
         </View>
-        <Text key={4} style={styles.label}>
+        <Text key={14} style={styles.label}>
           {tourDetail.considerations}
         </Text>
-        <Text key={14} style={styles.title}>
+        <Text key={15} style={styles.title}>
           Comentarios
         </Text>
-        <View key={15} style={{ marginVertical: 10 }}>
+        <View key={16} style={{ marginVertical: 10 }}>
           {tourDetail.comments?.length == 0 ? (
             <Text style={{ marginVertical: 10 }}>No hay comentarios</Text>
           ) : (

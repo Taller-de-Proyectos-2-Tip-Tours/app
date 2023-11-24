@@ -1,17 +1,23 @@
 import { serializeQuerys } from "../Const";
 import { getToken } from "../../useCases/login/getToken";
 
+const getHeaders = async () => {
+  let token = await getToken();
+  let headers = {
+    Accept: "application/json",
+    "Content-type": "application/json",
+    token: token,
+    Authorization : `Bearer ${"e2d8b11150251d6111f74746eba5fef6"}`
+  }
+  return headers
+}
+
 export const fetchDataFromApi = async (url, queryParams) => {
   try {
     console.log(`fetchDataFromApi ${url + serializeQuerys(queryParams)}`);
-    let token = await getToken();
     const response = await fetch(url + serializeQuerys(queryParams), {
       method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-        token: token,
-      },
+      headers: await getHeaders(),
     });
     let responseJson = await response.json();
     if (!response.ok) {
@@ -32,15 +38,10 @@ export const postDataToApi = async (url, queryParams, body) => {
         queryParams
       )} and body : ${JSON.stringify(body)}`
     );
-    let token = await getToken();
+    let headers = await getHeaders()
     const response = await fetch(url + serializeQuerys(queryParams), {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-        "Cache-Control": "no-cache",
-        token: token,
-      },
+      headers: {...headers, "Cache-Control": "no-cache" },
       body: JSON.stringify(body),
     });
     let responseJson = await response.json();
@@ -58,14 +59,9 @@ export const postDataToApi = async (url, queryParams, body) => {
 
 export const deleteDataToApi = async (url, queryParams, body) => {
   try {
-    let token = await getToken();
     const response = await fetch(url + serializeQuerys(queryParams), {
       method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-        token: token,
-      },
+      headers: await getHeaders(),
       body: JSON.stringify(body),
     });
     let responseJson = await response.json();
